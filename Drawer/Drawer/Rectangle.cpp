@@ -19,3 +19,10 @@ void CRectangle::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 {
 	m_rectDrawer->Draw(hDC, rect);
 }
+
+bool CRectangle::IsShapePoint(const Gdiplus::Point& inPoint) const
+{
+	auto boundingBox = GetBoundingBox();
+	return ((inPoint.X >= boundingBox->GetLeft()) && (inPoint.X <= boundingBox->GetRight()) && 
+			(inPoint.Y >= boundingBox->GetTop()) && (inPoint.Y <= boundingBox->GetBottom()));
+}

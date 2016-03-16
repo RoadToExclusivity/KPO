@@ -9,6 +9,7 @@ public:
 	CRectangle(int x, int y, int width, int height);
 	~CRectangle();
 	void Draw(HDC, const Gdiplus::Rect*) const override;
+	bool IsShapePoint(const Gdiplus::Point&) const override;
 
 private:
 	CRectangleDrawer* m_rectDrawer;

@@ -73,7 +73,7 @@
       <Filter>ShapeDrawers</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>ShapeDefinitions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +117,7 @@
       <Filter>ShapeDrawers</Filter>
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
-      <Filter>Файлы исходного кода</Filter>
+      <Filter>ShapeDefinitions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

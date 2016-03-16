@@ -19,3 +19,8 @@ void CTriangle::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 	m_triangleDrawer->DrawSelectionBorder(hDC, rect);
 	m_triangleDrawer->Draw(hDC, rect);
 }
+
+bool CTriangle::IsShapePoint(const Gdiplus::Point& inPoint) const
+{
+	return false;
+}

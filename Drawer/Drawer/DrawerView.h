@@ -46,7 +46,9 @@ protected:
 
 // Generated message map functions
 protected:
-	afx_msg void OnFilePrintPreview();
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
@@ -57,6 +59,11 @@ public:
 private:
 	const LPRECT GetClientRectangle();
 	LPRECT m_clientRectangle;
+
+	bool m_isShapeDragged;
+	int m_dragShapeIndex;
+	Gdiplus::Point m_prevPointPosition;
+	Gdiplus::Point m_startPointPosition;
 };
 
 #ifndef _DEBUG  // debug version in DrawerView.cpp
