@@ -69,6 +69,12 @@
     <ClInclude Include="EllipseDrawer.h">
       <Filter>ShapeDrawers</Filter>
     </ClInclude>
+    <ClInclude Include="TriangleDrawer.h">
+      <Filter>ShapeDrawers</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Drawer.cpp">
@@ -106,6 +112,12 @@
     </ClCompile>
     <ClCompile Include="EllipseDrawer.cpp">
       <Filter>ShapeDrawers</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleDrawer.cpp">
+      <Filter>ShapeDrawers</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,27 +163,6 @@
       <Filter>Файлы ресурсов</Filter>
     </Image>
     <Image Include="res\Toolbar256.bmp">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="res\bitmap1.bmp">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\..\Screenshots\shapes_image.bmp">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\..\Screenshots\shapes_image.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\..\Downloads\11111.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\..\Screenshots\123.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\..\Screenshots\123.bmp">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\..\Screenshots\333.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
     <Image Include="res\ShapeButtons.png">

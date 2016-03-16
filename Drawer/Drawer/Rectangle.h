@@ -8,7 +8,7 @@ class CRectangle :
 public:
 	CRectangle(int x, int y, int width, int height);
 	~CRectangle();
-	void Draw(CDC*, LPRECT) const override;
+	void Draw(HDC, const Gdiplus::Rect*) const override;
 
 private:
 	CRectangleDrawer* m_rectDrawer;

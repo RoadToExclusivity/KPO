@@ -4,8 +4,8 @@
 
 CEllipseDrawer::CEllipseDrawer()
 	:IShapeDrawer(),
-	m_pen(new CPen(PS_SOLID, 2, RGB(102, 153, 51))),
-	m_brush(new CBrush(RGB(0, 102, 153)))
+	m_pen(new Gdiplus::Pen(Gdiplus::Color(102, 153, 51), 2.0f)),
+	m_brush(new Gdiplus::SolidBrush(Gdiplus::Color(0, 102, 153)))
 {
 }
 
@@ -22,16 +22,13 @@ CEllipseDrawer::~CEllipseDrawer()
 	}
 }
 
-void CEllipseDrawer::Draw(CDC* pDC, const LPRECT rect) const
+void CEllipseDrawer::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 {
-	if (pDC && rect && m_pen && m_brush)
+	if (hDC && rect && m_pen && m_brush)
 	{
-		auto oldBrush = pDC->SelectObject(m_brush);
-		auto oldPen = pDC->SelectObject(m_pen);
-
-		pDC->Ellipse(rect);
-
-		pDC->SelectObject(oldBrush);
-		pDC->SelectObject(oldPen);
+		Gdiplus::Graphics g(hDC);
+		g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
+		g.DrawEllipse(m_pen, *rect);
+		g.FillEllipse(m_brush, *rect);
 	}
 }

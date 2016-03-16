@@ -1,11 +1,11 @@
 #pragma once
 #include "IShapeDrawer.h"
-class CEllipseDrawer :
+class CTriangleDrawer :
 	public IShapeDrawer
 {
 public:
-	CEllipseDrawer();
-	~CEllipseDrawer();
+	CTriangleDrawer();
+	~CTriangleDrawer();
 
 	void Draw(HDC, const Gdiplus::Rect*) const override;
 

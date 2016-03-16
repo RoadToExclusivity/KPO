@@ -115,6 +115,8 @@
     <ClInclude Include="SelectionBox.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="TriangleDrawer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Drawer.cpp" />
@@ -132,6 +134,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="TriangleDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Drawer.reg" />
@@ -142,13 +146,6 @@
     <ResourceCompile Include="Drawer.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\..\Downloads\11111.png" />
-    <Image Include="..\..\..\..\..\..\Screenshots\123.bmp" />
-    <Image Include="..\..\..\..\..\..\Screenshots\123.png" />
-    <Image Include="..\..\..\..\..\..\Screenshots\333.png" />
-    <Image Include="..\..\..\..\..\..\Screenshots\shapes_image.bmp" />
-    <Image Include="..\..\..\..\..\..\Screenshots\shapes_image.png" />
-    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\buttons.bmp" />
     <Image Include="res\Drawer.ico" />
     <Image Include="res\DrawerDoc.ico" />

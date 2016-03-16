@@ -8,7 +8,7 @@ IShapeDrawer::IShapeDrawer()
 
 IShapeDrawer::~IShapeDrawer(){}
 
-void IShapeDrawer::DrawSelectionBorder(CDC* pDC, const LPRECT rect)
+void IShapeDrawer::DrawSelectionBorder(HDC hDC, const Gdiplus::Rect* rect)
 {
-	CSelectionBox::DrawSelectionBorder(pDC, rect);
+	CSelectionBox::DrawSelectionBorder(hDC, rect);
 }

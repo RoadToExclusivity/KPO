@@ -1,11 +1,15 @@
 #include "stdafx.h"
 #include "SelectionBox.h"
 
-CPen CSelectionBox::m_pen(PS_SOLID, 2, RGB(255, 102, 51));
+Gdiplus::Pen* CSelectionBox::m_pen(nullptr);
 
-void CSelectionBox::DrawSelectionBorder(CDC* pDC, const LPRECT rect)
+void CSelectionBox::DrawSelectionBorder(HDC hDC, const Gdiplus::Rect* rect)
 {
-	auto oldPen = pDC->SelectObject(m_pen);
-	pDC->Rectangle(rect);
-	pDC->SelectObject(oldPen);
+	if (!m_pen)
+	{
+		m_pen = new Gdiplus::Pen(Gdiplus::Color(255, 102, 51), 2.0f);
+	}
+
+	Gdiplus::Graphics g(hDC);
+	g.DrawRectangle(m_pen, *rect);
 }

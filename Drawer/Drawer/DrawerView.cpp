@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CDrawerView, CView)
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_BUTTON_RECTANGLE, &CDrawerView::OnButtonRectangle)
 	ON_COMMAND(ID_BUTTON_ELLIPSE, &CDrawerView::OnButtonEllipse)
+	ON_COMMAND(ID_BUTTON_TRIANGLE, &CDrawerView::OnButtonTriangle)
 END_MESSAGE_MAP()
 
 // CDrawerView construction/destruction
@@ -87,10 +88,8 @@ void CDrawerView::OnDraw(CDC* pDC)
 	auto shapes = pDoc->GetShapes();
 	for (const auto shape: shapes)
 	{
-		shape->Draw(pDC, shape->GetBoundingBox());
-		
+		shape->Draw(pDC->GetSafeHdc(), shape->GetBoundingBox());
 	}
-	// TODO: add draw code for native data here
 }
 
 void CDrawerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -137,7 +136,6 @@ void CDrawerView::OnButtonRectangle()
 	{
 		Invalidate();
 	}
-	// TODO: добавьте свой код обработчика команд
 }
 
 
@@ -148,5 +146,14 @@ void CDrawerView::OnButtonEllipse()
 	{
 		Invalidate();
 	}
-	// TODO: добавьте свой код обработчика команд
+}
+
+
+void CDrawerView::OnButtonTriangle()
+{
+	auto triangle = GetDocument()->CreateTriangle(GetClientRectangle());
+	if (triangle)
+	{
+		Invalidate();
+	}
 }

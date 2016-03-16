@@ -2,10 +2,9 @@
 class CSelectionBox
 {
 public:
-	static void DrawSelectionBorder(CDC*, const LPRECT);
+	static void DrawSelectionBorder(HDC, const Gdiplus::Rect*);
 
 private:
 	CSelectionBox() = delete;
-	static CPen m_pen;
+	static Gdiplus::Pen* m_pen;
 };
-

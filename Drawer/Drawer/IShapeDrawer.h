@@ -4,8 +4,8 @@ class IShapeDrawer
 {
 public:
 	virtual ~IShapeDrawer();
-	virtual void Draw(CDC*, const LPRECT) const = 0;
-	void DrawSelectionBorder(CDC*, const LPRECT);
+	virtual void Draw(HDC, const Gdiplus::Rect*) const = 0;
+	void DrawSelectionBorder(HDC, const Gdiplus::Rect*);
 
 protected:
 	IShapeDrawer();

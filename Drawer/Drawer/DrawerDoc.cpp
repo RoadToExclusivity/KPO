@@ -10,6 +10,7 @@
 #include <propkey.h>
 #include "Rectangle.h"
 #include "Ellipse.h"
+#include "Triangle.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,6 +63,20 @@ IShape* CDrawerDoc::CreateEllipse(const LPRECT rect)
 	}
 
 	return newEllipse;
+}
+
+IShape* CDrawerDoc::CreateTriangle(const LPRECT rect)
+{
+	LONG width = rect->right;
+	LONG height = rect->bottom;
+	auto newTriangle = new CTriangle((width - TRIANGLE_WIDTH_START) / 2, (height - TRIANGLE_HEIGHT_START) / 2,
+		TRIANGLE_WIDTH_START, TRIANGLE_HEIGHT_START);
+	if (newTriangle)
+	{
+		m_shapes.push_back(newTriangle);
+	}
+
+	return newTriangle;
 }
 
 const std::vector<IShape*> CDrawerDoc::GetShapes() const

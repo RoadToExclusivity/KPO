@@ -8,7 +8,7 @@ public:
 	CRectangleDrawer();
 	~CRectangleDrawer();
 
-	void Draw(CDC*, const LPRECT) const override;
+	void Draw(HDC, const Gdiplus::Rect*) const override;
 
 private:
 	Gdiplus::Pen* m_pen;

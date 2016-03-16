@@ -28,6 +28,7 @@ public:
 	void PushShape(IShape*);
 	IShape* CreateRectangle(LPRECT);
 	IShape* CreateEllipse(LPRECT);
+	IShape* CreateTriangle(LPRECT);
 // Operations
 public:
 
@@ -64,5 +65,7 @@ private:
 	const LONG RECTANGLE_HEIGHT_START = 100;
 	const LONG ELLIPSE_WIDTH_START = 200;
 	const LONG ELLIPSE_HEIGHT_START = 200;
+	const LONG TRIANGLE_WIDTH_START = 100;
+	const LONG TRIANGLE_HEIGHT_START = 150;
 	std::vector<IShape*> m_shapes;
 };

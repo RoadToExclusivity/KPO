@@ -52,11 +52,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnButtonRectangle();
+	afx_msg void OnButtonEllipse();
+	afx_msg void OnButtonTriangle();
 private:
 	const LPRECT GetClientRectangle();
 	LPRECT m_clientRectangle;
-public:
-	afx_msg void OnButtonEllipse();
 };
 
 #ifndef _DEBUG  // debug version in DrawerView.cpp

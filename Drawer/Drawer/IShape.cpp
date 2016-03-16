@@ -1,17 +1,9 @@
 #include "stdafx.h"
 #include "IShape.h"
 
-
 IShape::IShape(int x, int y, int width, int height)
-	:m_boundingBox(new RECT())
+	:m_boundingBox(new Gdiplus::Rect(x, y, width, height))
 {
-	if (m_boundingBox)
-	{
-		m_boundingBox->left = x;
-		m_boundingBox->top = y;
-		m_boundingBox->right = x + width;
-		m_boundingBox->bottom = y + height;
-	}
 }
 
 IShape::~IShape()
@@ -22,7 +14,7 @@ IShape::~IShape()
 	}
 }
 
-LPRECT IShape::GetBoundingBox() const
+const Gdiplus::Rect* IShape::GetBoundingBox() const
 {
 	return m_boundingBox;
 }

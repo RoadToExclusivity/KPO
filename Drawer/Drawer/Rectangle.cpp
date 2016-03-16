@@ -15,7 +15,7 @@ CRectangle::~CRectangle()
 	}
 }
 
-void CRectangle::Draw(CDC* pDC, LPRECT rect) const
+void CRectangle::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 {
-	m_rectDrawer->Draw(pDC, rect);
+	m_rectDrawer->Draw(hDC, rect);
 }

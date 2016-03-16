@@ -14,8 +14,8 @@ CEllipse::~CEllipse()
 	}
 }
 
-void CEllipse::Draw(CDC* pDC, LPRECT rect) const
+void CEllipse::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 {
-	m_ellipseDrawer->DrawSelectionBorder(pDC, rect);
-	m_ellipseDrawer->Draw(pDC, rect);
+	m_ellipseDrawer->DrawSelectionBorder(hDC, rect);
+	m_ellipseDrawer->Draw(hDC, rect);
 }

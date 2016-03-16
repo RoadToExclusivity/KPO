@@ -3,13 +3,13 @@ class IShape
 {
 public:
 	virtual ~IShape();
-	LPRECT GetBoundingBox() const;
-	virtual void Draw(CDC*, LPRECT) const = 0;
+	const Gdiplus::Rect* GetBoundingBox() const;
+	virtual void Draw(const HDC, const Gdiplus::Rect*) const = 0;
 
 protected:
 	IShape(int x, int y, int width, int height);
 
 private:
-	LPRECT m_boundingBox;
+	Gdiplus::Rect* m_boundingBox;
 };
 

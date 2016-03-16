@@ -8,9 +8,8 @@ class CEllipse :
 public:
 	CEllipse(int x, int y, int width, int height);
 	~CEllipse();
-	void Draw(CDC*, LPRECT) const override;
+	void Draw(HDC, const Gdiplus::Rect*) const override;
 
 private:
 	CEllipseDrawer* m_ellipseDrawer;
 };
-

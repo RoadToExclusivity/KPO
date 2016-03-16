@@ -5,8 +5,6 @@ CRectangleDrawer::CRectangleDrawer()
 	:IShapeDrawer(),
 	m_pen(new Gdiplus::Pen(Gdiplus::Color(102, 153, 51), 2.0f)),
 	m_brush(new Gdiplus::SolidBrush(Gdiplus::Color(0, 102, 153)))
-	//m_pen(new CPen(PS_SOLID, 2, RGB(102, 153, 51))),
-	//m_brush(new CBrush(RGB(0, 102, 153)))
 {
 }
 
@@ -23,20 +21,13 @@ CRectangleDrawer::~CRectangleDrawer()
 	}
 }
 
-void CRectangleDrawer::Draw(CDC* pDC, const LPRECT rect) const
+void CRectangleDrawer::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 {
-	if (pDC && rect && m_pen && m_brush)
+	if (hDC && rect && m_pen && m_brush)
 	{
-		auto hDC = pDC->GetSafeHdc();
 		Gdiplus::Graphics g(hDC);
-		g.DrawRectangle(m_pen, Gdiplus::Rect(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top));
-		g.FillRectangle(m_brush, Gdiplus::Rect(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top));
-		/*auto oldBrush = pDC->SelectObject(m_brush);
-		auto oldPen = pDC->SelectObject(m_pen);
-
-		pDC->Rectangle(rect);
-
-		pDC->SelectObject(oldBrush);
-		pDC->SelectObject(oldPen);*/
+		g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
+		g.DrawRectangle(m_pen, *rect);
+		g.FillRectangle(m_brush, *rect);
 	}
 }
