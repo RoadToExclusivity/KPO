@@ -16,8 +16,12 @@ CEllipse::~CEllipse()
 
 void CEllipse::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 {
-	m_ellipseDrawer->DrawSelectionBorder(hDC, rect);
 	m_ellipseDrawer->Draw(hDC, rect);
+}
+
+void CEllipse::DrawSelectionBox(HDC hDC, const Gdiplus::Rect* rect) const
+{
+	m_ellipseDrawer->DrawSelectionBorder(hDC, rect);
 }
 
 bool CEllipse::IsShapePoint(const Gdiplus::Point& inPoint) const

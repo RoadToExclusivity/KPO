@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CDrawerView, CView)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
+	ON_WM_ERASEBKGND()
 	ON_COMMAND(ID_BUTTON_RECTANGLE, &CDrawerView::OnButtonRectangle)
 	ON_COMMAND(ID_BUTTON_ELLIPSE, &CDrawerView::OnButtonEllipse)
 	ON_COMMAND(ID_BUTTON_TRIANGLE, &CDrawerView::OnButtonTriangle)
@@ -50,10 +51,10 @@ CDrawerView::CDrawerView()
 	m_isShapeDragged(false),
 	m_dragShapeIndex(-1),
 	m_prevPointPosition(),
-	m_startPointPosition()
+	m_startPointPosition(),
+	m_backgroundBrush(Gdiplus::Color(255, 255, 255)),
+	m_selectedShapeIndex(-1)
 {
-	// TODO: add construction code here
-
 }
 
 CDrawerView::~CDrawerView()
@@ -93,21 +94,33 @@ void CDrawerView::OnDraw(CDC* pDC)
 		return;
 	
 	auto clientRect = GetClientRectangle();
-	Gdiplus::Bitmap bmp(clientRect->right, clientRect->bottom);
-	Gdiplus::Graphics* newGraphics = Gdiplus::Graphics::FromImage(&bmp);
-	Gdiplus::Graphics g(pDC->GetSafeHdc());
-	g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
+	HDC mainHDC = pDC->GetSafeHdc();
+	HDC bufferHDC = CreateCompatibleDC(mainHDC);
+	const int memDC = SaveDC(bufferHDC);
+
+	HBITMAP buff = CreateCompatibleBitmap(mainHDC, clientRect->right, clientRect->bottom);
+	SelectObject(bufferHDC, buff);
+
+	Gdiplus::Graphics g(bufferHDC);
+	g.FillRectangle(&m_backgroundBrush, 0, 0, clientRect->right, clientRect->bottom);
 
 	auto shapes = pDoc->GetShapes();
 	for (const auto shape: shapes)
 	{
-		shape->Draw(newGraphics->GetHDC(), shape->GetBoundingBox());
+		shape->Draw(bufferHDC, shape->GetBoundingBox());
 	}
 
-	//BitBlt(pDC->GetSafeHdc(), 0, 0, clientRect->right, clientRect->bottom, newGraphics->GetHDC(), 0, 0, SRCCOPY);
-	g.DrawImage(&bmp, 0, 0);
+	if (m_selectedShapeIndex != -1)
+	{
+		shapes[m_selectedShapeIndex]->DrawSelectionBox(bufferHDC, shapes[m_selectedShapeIndex]->GetBoundingBox());
+	}
 
-	delete newGraphics;
+	RECT clipRect;
+	GetClipBox(mainHDC, &clipRect);
+	BitBlt(mainHDC, clipRect.left, clipRect.top, clipRect.right - clipRect.left, clipRect.bottom - clipRect.top, 
+			bufferHDC, clipRect.left, clipRect.top, SRCCOPY);
+	RestoreDC(bufferHDC, memDC);
+	DeleteObject(buff);
 }
 
 void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
@@ -119,6 +132,7 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 	if (!pDoc)
 		return;
 
+	m_selectedShapeIndex = -1;
 	auto shapes = pDoc->GetShapes();
 	for (int i = shapes.size() - 1; i >= 0; --i)
 	{
@@ -128,9 +142,11 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 			m_dragShapeIndex = i;
 			m_prevPointPosition = gdiPoint;
 			m_startPointPosition = shapes[i]->GetPosition();
-			break;
+			return;
 		}
 	}
+
+	Invalidate();
 }
 
 void CDrawerView::OnMouseMove(UINT /* nFlags */, CPoint point)
@@ -154,7 +170,18 @@ void CDrawerView::OnLButtonUp(UINT /* nFlags */, CPoint point)
 	if (m_isShapeDragged)
 	{
 		m_isShapeDragged = false;
+		CDrawerDoc* pDoc = GetDocument();
+		ASSERT_VALID(pDoc);
+		if (!pDoc)
+		{
+			m_dragShapeIndex = -1;
+			return;
+		}
+		
+		m_selectedShapeIndex = m_dragShapeIndex;
 		m_dragShapeIndex = -1;
+
+		Invalidate();
 	}
 }
 
@@ -171,7 +198,10 @@ void CDrawerView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #endif
 }
 
-
+BOOL CDrawerView::OnEraseBkgnd(CDC* pDC)
+{
+	return FALSE;
+}
 // CDrawerView diagnostics
 
 #ifdef _DEBUG
@@ -200,6 +230,7 @@ void CDrawerView::OnButtonRectangle()
 	auto rect = GetDocument()->CreateRectangle(GetClientRectangle());
 	if (rect)
 	{
+		m_selectedShapeIndex = -1;
 		Invalidate();
 	}
 }
@@ -209,6 +240,7 @@ void CDrawerView::OnButtonEllipse()
 	auto ellipse = GetDocument()->CreateEllipse(GetClientRectangle());
 	if (ellipse)
 	{
+		m_selectedShapeIndex = -1;
 		Invalidate();
 	}
 }
@@ -218,6 +250,7 @@ void CDrawerView::OnButtonTriangle()
 	auto triangle = GetDocument()->CreateTriangle(GetClientRectangle());
 	if (triangle)
 	{
+		m_selectedShapeIndex = -1;
 		Invalidate();
 	}
 }

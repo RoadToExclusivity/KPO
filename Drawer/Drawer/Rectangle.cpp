@@ -20,6 +20,12 @@ void CRectangle::Draw(HDC hDC, const Gdiplus::Rect* rect) const
 	m_rectDrawer->Draw(hDC, rect);
 }
 
+void CRectangle::DrawSelectionBox(HDC hDC, const Gdiplus::Rect* rect) const
+{
+	m_rectDrawer->DrawSelectionBorder(hDC, rect);
+}
+
+
 bool CRectangle::IsShapePoint(const Gdiplus::Point& inPoint) const
 {
 	auto boundingBox = GetBoundingBox();

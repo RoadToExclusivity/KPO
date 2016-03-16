@@ -51,6 +51,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnButtonRectangle();
@@ -62,8 +63,10 @@ private:
 
 	bool m_isShapeDragged;
 	int m_dragShapeIndex;
+	int m_selectedShapeIndex;
 	Gdiplus::Point m_prevPointPosition;
 	Gdiplus::Point m_startPointPosition;
+	Gdiplus::SolidBrush m_backgroundBrush;
 };
 
 #ifndef _DEBUG  // debug version in DrawerView.cpp
