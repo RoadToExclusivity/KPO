@@ -21,6 +21,7 @@
 
 #include "DrawerDoc.h"
 #include "DrawerView.h"
+#include "Rectangle.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,11 +35,14 @@ IMPLEMENT_DYNCREATE(CDrawerView, CView)
 BEGIN_MESSAGE_MAP(CDrawerView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_COMMAND(ID_BUTTON_RECTANGLE, &CDrawerView::OnButtonRectangle)
+	ON_COMMAND(ID_BUTTON_ELLIPSE, &CDrawerView::OnButtonEllipse)
 END_MESSAGE_MAP()
 
 // CDrawerView construction/destruction
 
 CDrawerView::CDrawerView()
+	:m_clientRectangle(nullptr)
 {
 	// TODO: add construction code here
 
@@ -46,6 +50,21 @@ CDrawerView::CDrawerView()
 
 CDrawerView::~CDrawerView()
 {
+	if (m_clientRectangle)
+	{
+		delete m_clientRectangle;
+	}
+}
+
+const LPRECT CDrawerView::GetClientRectangle()
+{
+	if (!m_clientRectangle)
+	{
+		m_clientRectangle = new RECT();
+	}
+	GetClientRect(m_clientRectangle);
+
+	return m_clientRectangle;
 }
 
 BOOL CDrawerView::PreCreateWindow(CREATESTRUCT& cs)
@@ -58,13 +77,19 @@ BOOL CDrawerView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CDrawerView drawing
 
-void CDrawerView::OnDraw(CDC* /*pDC*/)
+void CDrawerView::OnDraw(CDC* pDC)
 {
 	CDrawerDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-
+	
+	auto shapes = pDoc->GetShapes();
+	for (const auto shape: shapes)
+	{
+		shape->Draw(pDC, shape->GetBoundingBox());
+		
+	}
 	// TODO: add draw code for native data here
 }
 
@@ -104,3 +129,24 @@ CDrawerDoc* CDrawerView::GetDocument() const // non-debug version is inline
 
 
 // CDrawerView message handlers
+
+void CDrawerView::OnButtonRectangle()
+{
+	auto rect = GetDocument()->CreateRectangle(GetClientRectangle());
+	if (rect)
+	{
+		Invalidate();
+	}
+	// TODO: добавьте свой код обработчика команд
+}
+
+
+void CDrawerView::OnButtonEllipse()
+{
+	auto ellipse = GetDocument()->CreateEllipse(GetClientRectangle());
+	if (ellipse)
+	{
+		Invalidate();
+	}
+	// TODO: добавьте свой код обработчика команд
+}

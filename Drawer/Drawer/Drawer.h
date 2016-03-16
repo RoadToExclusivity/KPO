@@ -43,6 +43,9 @@ public:
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+private:
+	Gdiplus::GdiplusStartupInput m_gdiStartupInput;
+	ULONG_PTR m_gdiplusToken;
 };
 
 extern CDrawerApp theApp;

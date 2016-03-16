@@ -59,7 +59,7 @@ BOOL CDrawerApp::InitInstance()
 {
 	CWinAppEx::InitInstance();
 
-
+	Gdiplus::GdiplusStartup(&m_gdiplusToken, &m_gdiStartupInput, nullptr);
 	// Initialize OLE libraries
 	if (!AfxOleInit())
 	{
@@ -133,8 +133,9 @@ BOOL CDrawerApp::InitInstance()
 int CDrawerApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
+	Gdiplus::GdiplusShutdown(m_gdiplusToken);
 	AfxOleTerm(FALSE);
-
+	
 	return CWinAppEx::ExitInstance();
 }
 
@@ -198,6 +199,4 @@ void CDrawerApp::SaveCustomState()
 }
 
 // CDrawerApp message handlers
-
-
 

@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ShapeDrawers">
+      <UniqueIdentifier>{5f400d15-121a-4eb6-b562-27ab8f611d1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShapeDefinitions">
+      <UniqueIdentifier>{8c541ba6-643f-436c-a74e-c5a1a9306fce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SelectionBorder">
+      <UniqueIdentifier>{c1292029-bf8f-4900-97ee-077c76f0bc11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,6 +48,27 @@
     <ClInclude Include="Resource.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="IShapeDrawer.h">
+      <Filter>ShapeDrawers</Filter>
+    </ClInclude>
+    <ClInclude Include="RectangleDrawer.h">
+      <Filter>ShapeDrawers</Filter>
+    </ClInclude>
+    <ClInclude Include="IShape.h">
+      <Filter>ShapeDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionBox.h">
+      <Filter>SelectionBorder</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>ShapeDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Ellipse.h">
+      <Filter>ShapeDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="EllipseDrawer.h">
+      <Filter>ShapeDrawers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Drawer.cpp">
@@ -55,6 +85,27 @@
     </ClCompile>
     <ClCompile Include="DrawerView.cpp">
       <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="IShapeDrawer.cpp">
+      <Filter>ShapeDrawers</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleDrawer.cpp">
+      <Filter>ShapeDrawers</Filter>
+    </ClCompile>
+    <ClCompile Include="IShape.cpp">
+      <Filter>ShapeDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectionBox.cpp">
+      <Filter>SelectionBorder</Filter>
+    </ClCompile>
+    <ClCompile Include="Rectangle.cpp">
+      <Filter>ShapeDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Ellipse.cpp">
+      <Filter>ShapeDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="EllipseDrawer.cpp">
+      <Filter>ShapeDrawers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +169,12 @@
       <Filter>Файлы ресурсов</Filter>
     </Image>
     <Image Include="..\..\..\..\..\..\Screenshots\123.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="..\..\..\..\..\..\Screenshots\333.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\ShapeButtons.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
   </ItemGroup>

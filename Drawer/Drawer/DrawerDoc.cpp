@@ -1,17 +1,3 @@
-// This MFC Samples source code demonstrates using MFC Microsoft Office Fluent User Interface 
-// (the "Fluent UI") and is provided only as referential material to supplement the 
-// Microsoft Foundation Classes Reference and related electronic documentation 
-// included with the MFC C++ library software.  
-// License terms to copy, use or distribute the Fluent UI are available separately.  
-// To learn more about our Fluent UI licensing program, please visit 
-// http://go.microsoft.com/fwlink/?LinkId=238214.
-//
-// Copyright (C) Microsoft Corporation
-// All rights reserved.
-
-// DrawerDoc.cpp : implementation of the CDrawerDoc class
-//
-
 #include "stdafx.h"
 // SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
 // and search filter handlers and allows sharing of document code with that project.
@@ -22,6 +8,8 @@
 #include "DrawerDoc.h"
 
 #include <propkey.h>
+#include "Rectangle.h"
+#include "Ellipse.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,6 +26,7 @@ END_MESSAGE_MAP()
 // CDrawerDoc construction/destruction
 
 CDrawerDoc::CDrawerDoc()
+	:m_shapes()
 {
 	// TODO: add one-time construction code here
 
@@ -47,19 +36,55 @@ CDrawerDoc::~CDrawerDoc()
 {
 }
 
+IShape* CDrawerDoc::CreateRectangle(const LPRECT rect)
+{
+	LONG width = rect->right;
+	LONG height = rect->bottom;
+	auto newRect = new CRectangle((width - RECTANGLE_WIDTH_START) / 2, (height - RECTANGLE_HEIGHT_START) / 2,
+									RECTANGLE_WIDTH_START, RECTANGLE_HEIGHT_START);
+	if (newRect)
+	{
+		m_shapes.push_back(newRect);
+	}
+	
+	return newRect;
+}
+
+IShape* CDrawerDoc::CreateEllipse(const LPRECT rect)
+{
+	LONG width = rect->right;
+	LONG height = rect->bottom;
+	auto newEllipse = new CEllipse((width - ELLIPSE_WIDTH_START) / 2, (height - ELLIPSE_HEIGHT_START) / 2,
+		ELLIPSE_WIDTH_START, ELLIPSE_HEIGHT_START);
+	if (newEllipse)
+	{
+		m_shapes.push_back(newEllipse);
+	}
+
+	return newEllipse;
+}
+
+const std::vector<IShape*> CDrawerDoc::GetShapes() const
+{
+	return m_shapes;
+}
+
+void CDrawerDoc::PushShape(IShape* shape)
+{
+	m_shapes.push_back(shape);
+}
+
 BOOL CDrawerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
+	m_shapes.clear();
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
 
 	return TRUE;
 }
-
-
-
 
 // CDrawerDoc serialization
 

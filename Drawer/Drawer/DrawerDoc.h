@@ -14,7 +14,7 @@
 
 
 #pragma once
-
+#include "IShape.h"
 
 class CDrawerDoc : public CDocument
 {
@@ -24,7 +24,10 @@ protected: // create from serialization only
 
 // Attributes
 public:
-
+	const std::vector<IShape*> GetShapes() const;
+	void PushShape(IShape*);
+	IShape* CreateRectangle(LPRECT);
+	IShape* CreateEllipse(LPRECT);
 // Operations
 public:
 
@@ -55,4 +58,11 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+
+private:
+	const LONG RECTANGLE_WIDTH_START = 200;
+	const LONG RECTANGLE_HEIGHT_START = 100;
+	const LONG ELLIPSE_WIDTH_START = 200;
+	const LONG ELLIPSE_HEIGHT_START = 200;
+	std::vector<IShape*> m_shapes;
 };

@@ -67,10 +67,10 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
+// PNG
 //
 
-IDB_BITMAP1             BITMAP                  "D:\\Screenshots\\123.bmp"
+IDB_PNG_SHAPE_BUTTONS   PNG                     "res\\ShapeButtons.png"
 #endif    // Русский (Россия) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -81,16 +81,6 @@ IDB_BITMAP1             BITMAP                  "D:\\Screenshots\\123.bmp"
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\Drawer.ico"
-IDR_DrawerTYPE          ICON                    "res\\DrawerDoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -105,6 +95,16 @@ IDB_FILESMALL           BITMAP                  "res\\filesmall.bmp"
 IDB_WRITELARGE          BITMAP                  "res\\writelarge.bmp"
 IDB_WRITESMALL          BITMAP                  "res\\writesmall.bmp"
 IDB_BUTTONS             BITMAP                  "res\\buttons.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\Drawer.ico"
+IDR_DrawerTYPE          ICON                    "res\\DrawerDoc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

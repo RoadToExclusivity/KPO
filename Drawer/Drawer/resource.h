@@ -35,7 +35,8 @@
 #define ID_VIEW_APPLOOK_WINDOWS_7       219
 #define IDS_EDIT_MENU                   306
 #define IDR_RIBBON                      307
-#define IDB_BITMAP1                     318
+#define IDB_PNG1                        321
+#define IDB_PNG_SHAPE_BUTTONS           321
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_BUTTON2                      32772
 #define ID_BUTTON3                      32775
@@ -48,7 +49,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        319
+#define _APS_NEXT_RESOURCE_VALUE        322
 #define _APS_NEXT_COMMAND_VALUE         32783
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
