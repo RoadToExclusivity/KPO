@@ -92,11 +92,22 @@ void CDrawerView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 	
+	auto clientRect = GetClientRectangle();
+	Gdiplus::Bitmap bmp(clientRect->right, clientRect->bottom);
+	Gdiplus::Graphics* newGraphics = Gdiplus::Graphics::FromImage(&bmp);
+	Gdiplus::Graphics g(pDC->GetSafeHdc());
+	g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
+
 	auto shapes = pDoc->GetShapes();
 	for (const auto shape: shapes)
 	{
-		shape->Draw(pDC->GetSafeHdc(), shape->GetBoundingBox());
+		shape->Draw(newGraphics->GetHDC(), shape->GetBoundingBox());
 	}
+
+	//BitBlt(pDC->GetSafeHdc(), 0, 0, clientRect->right, clientRect->bottom, newGraphics->GetHDC(), 0, 0, SRCCOPY);
+	g.DrawImage(&bmp, 0, 0);
+
+	delete newGraphics;
 }
 
 void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
@@ -193,7 +204,6 @@ void CDrawerView::OnButtonRectangle()
 	}
 }
 
-
 void CDrawerView::OnButtonEllipse()
 {
 	auto ellipse = GetDocument()->CreateEllipse(GetClientRectangle());
@@ -202,7 +212,6 @@ void CDrawerView::OnButtonEllipse()
 		Invalidate();
 	}
 }
-
 
 void CDrawerView::OnButtonTriangle()
 {
