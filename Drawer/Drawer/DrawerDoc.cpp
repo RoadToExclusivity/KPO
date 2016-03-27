@@ -95,6 +95,7 @@ BOOL CDrawerDoc::OnNewDocument()
 		return FALSE;
 
 	m_shapes.clear();
+	
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
 
@@ -107,11 +108,39 @@ void CDrawerDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		// TODO: add storing code here
+		ar << m_shapes.size();
+		for (size_t i = 0; i < m_shapes.size(); ++i)
+		{
+			auto box = m_shapes[i]->GetBoundingBox();
+			ar << (int)m_shapes[i]->GetShapeType() << box->X << box->Y << box->Width << box->Height;
+		}
 	}
 	else
 	{
-		// TODO: add loading code here
+		size_t shapesCount;
+		ar >> shapesCount;
+		for (size_t i = 0; i < shapesCount; ++i)
+		{
+			int intType;
+			ar >> intType;
+			ShapeType type = ShapeType(intType);
+			int x, y, width, height;
+			ar >> x >> y >> width >> height;
+			IShape* newShape = nullptr;
+			switch (type)
+			{
+			case ShapeType::TRIANGLE:
+				newShape = new CTriangle(x, y, width, height);
+				break;
+			case ShapeType::RECTANGLE:
+				newShape = new CRectangle(x, y, width, height);
+				break;
+			case ShapeType::ELLIPSE:
+				newShape = new CEllipse(x, y, width, height);
+				break;
+			}
+			m_shapes.push_back(newShape);
+		}
 	}
 }
 

@@ -49,9 +49,8 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnButtonRectangle();
@@ -62,6 +61,12 @@ private:
 	LPRECT m_clientRectangle;
 
 	bool m_isShapeDragged;
+	bool m_isShapeResized;
+	bool m_cursorChangeToCross;
+	bool m_cursorChangeToNormal;
+	bool m_cursorChangeToSizeWE;
+	bool m_cursorChangeToSizeEW;
+	SelectionBoxMarkerState m_resizeSelectionMarker;
 	int m_dragShapeIndex;
 	int m_selectedShapeIndex;
 	Gdiplus::Point m_prevPointPosition;

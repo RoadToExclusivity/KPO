@@ -31,3 +31,25 @@ void CSelectionBox::DrawSelectionBorder(HDC hDC, const Gdiplus::Rect* rect)
 		g.FillEllipse(m_circleBrush, ellipseRect);
 	}
 }
+
+SelectionBoxMarkerState CSelectionBox::IsPointAtMarker(Gdiplus::Point &point, const Gdiplus::Rect* rect)
+{
+	const Gdiplus::Point ellipsePoints[4] = { Gdiplus::Point(rect->GetLeft(), rect->GetTop()),
+											Gdiplus::Point(rect->GetRight(), rect->GetTop()),
+											Gdiplus::Point(rect->GetRight(), rect->GetBottom()),
+											Gdiplus::Point(rect->GetLeft(), rect->GetBottom()) };
+	const SelectionBoxMarkerState returnStates[4] = { SelectionBoxMarkerState::TOP_LEFT, 
+													SelectionBoxMarkerState::TOP_RIGHT,
+													SelectionBoxMarkerState::BOTTOM_RIGHT, 
+													SelectionBoxMarkerState::BOTTOM_LEFT };
+	for (int i = 0; i < 4; ++i)
+	{
+		if ((point.X - ellipsePoints[i].X) * (point.X - ellipsePoints[i].X) +
+			(point.Y - ellipsePoints[i].Y) * (point.Y - ellipsePoints[i].Y) <= CIRCLE_RADIUS * CIRCLE_RADIUS)
+		{
+			return returnStates[i];
+		}
+	}
+
+	return SelectionBoxMarkerState::NONE;
+}

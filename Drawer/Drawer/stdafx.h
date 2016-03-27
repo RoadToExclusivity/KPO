@@ -45,12 +45,18 @@
 #include <vector>
 #include <gdiplus.h>
 
+enum class SelectionBoxMarkerState
+{
+	NONE,
+	TOP_LEFT,
+	TOP_RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM_RIGHT
+};
 
-
-
-
-
-
-
-
-
+enum class ShapeType
+{
+	TRIANGLE,
+	RECTANGLE,
+	ELLIPSE
+};

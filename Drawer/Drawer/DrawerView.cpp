@@ -21,7 +21,6 @@
 
 #include "DrawerDoc.h"
 #include "DrawerView.h"
-#include "Rectangle.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,12 +32,11 @@
 IMPLEMENT_DYNCREATE(CDrawerView, CView)
 
 BEGIN_MESSAGE_MAP(CDrawerView, CView)
-	ON_WM_CONTEXTMENU()
-	ON_WM_RBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_ERASEBKGND()
+	ON_WM_SETCURSOR()
 	ON_COMMAND(ID_BUTTON_RECTANGLE, &CDrawerView::OnButtonRectangle)
 	ON_COMMAND(ID_BUTTON_ELLIPSE, &CDrawerView::OnButtonEllipse)
 	ON_COMMAND(ID_BUTTON_TRIANGLE, &CDrawerView::OnButtonTriangle)
@@ -53,7 +51,13 @@ CDrawerView::CDrawerView()
 	m_prevPointPosition(),
 	m_startPointPosition(),
 	m_backgroundBrush(Gdiplus::Color(255, 255, 255)),
-	m_selectedShapeIndex(-1)
+	m_selectedShapeIndex(-1),
+	m_isShapeResized(false),
+	m_cursorChangeToCross(false),
+	m_cursorChangeToNormal(false),
+	m_cursorChangeToSizeEW(false),
+	m_cursorChangeToSizeWE(false),
+	m_resizeSelectionMarker(SelectionBoxMarkerState::NONE)
 {
 }
 
@@ -132,8 +136,22 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 	if (!pDoc)
 		return;
 
-	m_selectedShapeIndex = -1;
 	auto shapes = pDoc->GetShapes();
+	if (m_selectedShapeIndex != -1)
+	{
+		auto curShape = shapes[m_selectedShapeIndex];
+		auto boundingBox = curShape->GetBoundingBox();
+		m_resizeSelectionMarker = curShape->IsPointAtMarker(gdiPoint, boundingBox);
+		if (m_resizeSelectionMarker != SelectionBoxMarkerState::NONE)
+		{
+			m_isShapeResized = true;
+
+			return;
+		}
+		//add shape size changes
+	}
+
+	m_selectedShapeIndex = -1;
 	for (int i = shapes.size() - 1; i >= 0; --i)
 	{
 		if (shapes[i]->IsShapePoint(gdiPoint))
@@ -151,57 +169,116 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 
 void CDrawerView::OnMouseMove(UINT /* nFlags */, CPoint point)
 {
-	if (m_isShapeDragged)
+	if (m_isShapeResized)
 	{
 		CDrawerDoc* pDoc = GetDocument();
 		ASSERT_VALID(pDoc);
 		if (!pDoc)
 			return;
-
+		
 		auto shapes = pDoc->GetShapes();
-		shapes[m_dragShapeIndex]->SetPosition(m_startPointPosition + Gdiplus::Point(point.x, point.y) - m_prevPointPosition);
+
+		shapes[m_selectedShapeIndex]->ChangeShape(m_resizeSelectionMarker, Gdiplus::Point(point.x, point.y));
+		if (m_resizeSelectionMarker == SelectionBoxMarkerState::BOTTOM_LEFT ||
+			m_resizeSelectionMarker == SelectionBoxMarkerState::TOP_RIGHT)
+		{
+			m_cursorChangeToSizeEW = true;
+		}
+		else
+		{
+			m_cursorChangeToSizeWE = true;
+		}
 
 		Invalidate();
+	}
+	else
+	{
+		if (m_isShapeDragged)
+		{
+			CDrawerDoc* pDoc = GetDocument();
+			ASSERT_VALID(pDoc);
+			if (!pDoc)
+				return;
+
+			m_cursorChangeToCross = true;
+			auto shapes = pDoc->GetShapes();
+			shapes[m_dragShapeIndex]->SetPosition(m_startPointPosition + Gdiplus::Point(point.x, point.y) - m_prevPointPosition);
+
+			Invalidate();
+		}
 	}
 }
 
 void CDrawerView::OnLButtonUp(UINT /* nFlags */, CPoint point)
 {
-	if (m_isShapeDragged)
+	if (m_isShapeResized)
 	{
-		m_isShapeDragged = false;
-		CDrawerDoc* pDoc = GetDocument();
-		ASSERT_VALID(pDoc);
-		if (!pDoc)
-		{
-			m_dragShapeIndex = -1;
-			return;
-		}
-		
-		m_selectedShapeIndex = m_dragShapeIndex;
-		m_dragShapeIndex = -1;
-
-		Invalidate();
+		m_isShapeResized = false;
+		m_cursorChangeToNormal = true;
+		OnSetCursor(this, 0, 0); //empty call for cursor changing runtime
 	}
-}
+	else
+	{
+		if (m_isShapeDragged)
+		{
+			m_isShapeDragged = false;
+			m_cursorChangeToNormal = true;
+			OnSetCursor(this, 0, 0); //empty call for cursor changing runtime
 
-void CDrawerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
-{
-	ClientToScreen(&point);
-	OnContextMenu(this, point);
-}
+			CDrawerDoc* pDoc = GetDocument();
+			ASSERT_VALID(pDoc);
+			if (!pDoc)
+			{
+				m_dragShapeIndex = -1;
+				return;
+			}
 
-void CDrawerView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
-{
-#ifndef SHARED_HANDLERS
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
-#endif
+			m_selectedShapeIndex = m_dragShapeIndex;
+			m_dragShapeIndex = -1;
+
+			Invalidate();
+		}
+	}
 }
 
 BOOL CDrawerView::OnEraseBkgnd(CDC* pDC)
 {
 	return FALSE;
 }
+
+BOOL CDrawerView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+	if (m_cursorChangeToNormal)
+	{
+		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
+		m_cursorChangeToNormal = false;
+		return TRUE;
+	}
+
+	if (m_cursorChangeToCross)
+	{
+		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEALL));
+		m_cursorChangeToCross = false;
+		return TRUE;
+	}
+
+	if (m_cursorChangeToSizeEW)
+	{
+		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZENESW));
+		m_cursorChangeToSizeEW = false;
+		return TRUE;
+	}
+
+	if (m_cursorChangeToSizeWE)
+	{
+		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZENWSE));
+		m_cursorChangeToSizeWE = false;
+		return TRUE;
+	}
+
+	return CView::OnSetCursor(pWnd, nHitTest, message);
+}
+
 // CDrawerView diagnostics
 
 #ifdef _DEBUG

@@ -9,6 +9,10 @@ public:
 	virtual bool IsShapePoint(const Gdiplus::Point&) const = 0;
 	Gdiplus::Point GetPosition() const;
 	void SetPosition(const Gdiplus::Point&);
+	SelectionBoxMarkerState IsPointAtMarker(Gdiplus::Point &point, const Gdiplus::Rect* rect) const;
+	void ChangeShape(SelectionBoxMarkerState state, Gdiplus::Point &newPoint);
+	virtual bool IsCorrectSize(int newWidth, int newHeight) const = 0;
+	virtual ShapeType GetShapeType() const = 0;
 
 protected:
 	IShape(int x, int y, int width, int height);
