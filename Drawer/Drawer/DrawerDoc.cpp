@@ -8,9 +8,7 @@
 #include "DrawerDoc.h"
 
 #include <propkey.h>
-#include "Rectangle.h"
-#include "Ellipse.h"
-#include "Triangle.h"
+#include "CShapeController.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,7 +25,10 @@ END_MESSAGE_MAP()
 // CDrawerDoc construction/destruction
 
 CDrawerDoc::CDrawerDoc()
-	:m_shapes()
+	:m_shapesControllers(),
+	m_ellipseFactory(),
+	m_rectFactory(),
+	m_triangleFactory()
 {
 	// TODO: add one-time construction code here
 
@@ -35,58 +36,57 @@ CDrawerDoc::CDrawerDoc()
 
 CDrawerDoc::~CDrawerDoc()
 {
+	m_shapesControllers.clear();
 }
 
-IShape* CDrawerDoc::CreateRectangle(const LPRECT rect)
+bool CDrawerDoc::CreateRectangle(const LPRECT rect)
 {
 	LONG width = rect->right;
 	LONG height = rect->bottom;
-	auto newRect = new CRectangle((width - RECTANGLE_WIDTH_START) / 2, (height - RECTANGLE_HEIGHT_START) / 2,
-									RECTANGLE_WIDTH_START, RECTANGLE_HEIGHT_START);
-	if (newRect)
+	auto newRectController =  m_rectFactory.CreateShapeController(Gdiplus::Rect((width - RECTANGLE_WIDTH_START) / 2, 
+														(height - RECTANGLE_HEIGHT_START) / 2,
+														RECTANGLE_WIDTH_START, RECTANGLE_HEIGHT_START));
+	if (newRectController)
 	{
-		m_shapes.push_back(newRect);
+		m_shapesControllers.push_back(std::unique_ptr<CShapeController>(newRectController));
 	}
 	
-	return newRect;
+	return newRectController != nullptr;
 }
 
-IShape* CDrawerDoc::CreateEllipse(const LPRECT rect)
+bool CDrawerDoc::CreateEllipse(const LPRECT rect)
 {
 	LONG width = rect->right;
 	LONG height = rect->bottom;
-	auto newEllipse = new CEllipse((width - ELLIPSE_WIDTH_START) / 2, (height - ELLIPSE_HEIGHT_START) / 2,
-		ELLIPSE_WIDTH_START, ELLIPSE_HEIGHT_START);
-	if (newEllipse)
+	auto newEllipseController = m_ellipseFactory.CreateShapeController(Gdiplus::Rect((width - ELLIPSE_WIDTH_START) / 2,
+														(height - ELLIPSE_HEIGHT_START) / 2,
+														ELLIPSE_WIDTH_START, ELLIPSE_HEIGHT_START));
+	if (newEllipseController)
 	{
-		m_shapes.push_back(newEllipse);
+		m_shapesControllers.emplace_back(std::unique_ptr<CShapeController>(newEllipseController));
 	}
 
-	return newEllipse;
+	return newEllipseController != nullptr;
 }
 
-IShape* CDrawerDoc::CreateTriangle(const LPRECT rect)
+bool CDrawerDoc::CreateTriangle(const LPRECT rect)
 {
 	LONG width = rect->right;
 	LONG height = rect->bottom;
-	auto newTriangle = new CTriangle((width - TRIANGLE_WIDTH_START) / 2, (height - TRIANGLE_HEIGHT_START) / 2,
-		TRIANGLE_WIDTH_START, TRIANGLE_HEIGHT_START);
-	if (newTriangle)
+	auto newTriangleController = m_triangleFactory.CreateShapeController(Gdiplus::Rect((width - TRIANGLE_WIDTH_START) / 2,
+															(height - TRIANGLE_HEIGHT_START) / 2,
+															TRIANGLE_WIDTH_START, TRIANGLE_HEIGHT_START));
+	if (newTriangleController)
 	{
-		m_shapes.push_back(newTriangle);
+		m_shapesControllers.emplace_back(std::unique_ptr<CShapeController>(newTriangleController));
 	}
 
-	return newTriangle;
+	return newTriangleController != nullptr;
 }
 
-const std::vector<IShape*> CDrawerDoc::GetShapes() const
+const std::vector<std::unique_ptr<CShapeController>> CDrawerDoc::GetShapes() const
 {
-	return m_shapes;
-}
-
-void CDrawerDoc::PushShape(IShape* shape)
-{
-	m_shapes.push_back(shape);
+	return m_shapesControllers;
 }
 
 BOOL CDrawerDoc::OnNewDocument()
@@ -94,7 +94,7 @@ BOOL CDrawerDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	m_shapes.clear();
+	m_shapesControllers.clear();
 	
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
@@ -108,11 +108,12 @@ void CDrawerDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << m_shapes.size();
-		for (size_t i = 0; i < m_shapes.size(); ++i)
+		ar << m_shapesControllers.size();
+		for (size_t i = 0; i < m_shapesControllers.size(); ++i)
 		{
-			auto box = m_shapes[i]->GetBoundingBox();
-			ar << (int)m_shapes[i]->GetShapeType() << box->X << box->Y << box->Width << box->Height;
+			const auto& ctrl = m_shapesControllers[i];
+			auto box = ctrl->GetBoundingBox();
+			ar << (int)(ctrl->GetShapeType()) << box.X << box.Y << box.Width << box.Height;
 		}
 	}
 	else
@@ -126,20 +127,23 @@ void CDrawerDoc::Serialize(CArchive& ar)
 			ShapeType type = ShapeType(intType);
 			int x, y, width, height;
 			ar >> x >> y >> width >> height;
-			IShape* newShape = nullptr;
+			CShapeController* newShapeCtrl = nullptr;
 			switch (type)
 			{
 			case ShapeType::TRIANGLE:
-				newShape = new CTriangle(x, y, width, height);
+				newShapeCtrl = m_triangleFactory.CreateShapeController(Gdiplus::Rect(x, y, width, height));
 				break;
 			case ShapeType::RECTANGLE:
-				newShape = new CRectangle(x, y, width, height);
+				newShapeCtrl = m_rectFactory.CreateShapeController(Gdiplus::Rect(x, y, width, height));
 				break;
 			case ShapeType::ELLIPSE:
-				newShape = new CEllipse(x, y, width, height);
+				newShapeCtrl = m_ellipseFactory.CreateShapeController(Gdiplus::Rect(x, y, width, height));
 				break;
 			}
-			m_shapes.push_back(newShape);
+			if (newShapeCtrl)
+			{
+				m_shapesControllers.emplace_back(std::unique_ptr<CShapeController>(newShapeCtrl));
+			}
 		}
 	}
 }

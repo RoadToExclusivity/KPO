@@ -1,10 +1,26 @@
 #include "stdafx.h"
-#include "SelectionBox.h"
+#include "SelectionBoxDrawer.h"
 
-Gdiplus::Pen* CSelectionBox::m_pen(nullptr);
-Gdiplus::SolidBrush* CSelectionBox::m_circleBrush(nullptr);
+CSelectionBox::CSelectionBox()
+	:m_pen(nullptr),
+	m_circleBrush(nullptr)
+{
+}
 
-void CSelectionBox::DrawSelectionBorder(HDC hDC, const Gdiplus::Rect* rect)
+CSelectionBox::~CSelectionBox()
+{
+	if (m_pen)
+	{
+		delete m_pen;
+	}
+
+	if (m_circleBrush)
+	{
+		delete m_circleBrush;
+	}
+}
+
+void CSelectionBox::DrawSelectionBorder(const HDC hDC, const Gdiplus::Rect& rect)
 {
 	if (!m_pen)
 	{
@@ -18,12 +34,12 @@ void CSelectionBox::DrawSelectionBorder(HDC hDC, const Gdiplus::Rect* rect)
 
 	Gdiplus::Graphics g(hDC);
 	g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
-	g.DrawRectangle(m_pen, *rect);
+	g.DrawRectangle(m_pen, rect);
 	
-	const Gdiplus::Point ellipsePoints[4] = { Gdiplus::Point(rect->GetLeft(), rect->GetTop()),
-											Gdiplus::Point(rect->GetRight(), rect->GetTop()),
-											Gdiplus::Point(rect->GetRight(), rect->GetBottom()),
-											Gdiplus::Point(rect->GetLeft(), rect->GetBottom()) };
+	const Gdiplus::Point ellipsePoints[4] = { Gdiplus::Point(rect.GetLeft(), rect.GetTop()),
+											Gdiplus::Point(rect.GetRight(), rect.GetTop()),
+											Gdiplus::Point(rect.GetRight(), rect.GetBottom()),
+											Gdiplus::Point(rect.GetLeft(), rect.GetBottom()) };
 	for (int i = 0; i < 4; ++i)
 	{
 		Gdiplus::Rect ellipseRect(ellipsePoints[i].X - CIRCLE_RADIUS, ellipsePoints[i].Y - CIRCLE_RADIUS, 
@@ -32,12 +48,12 @@ void CSelectionBox::DrawSelectionBorder(HDC hDC, const Gdiplus::Rect* rect)
 	}
 }
 
-SelectionBoxMarkerState CSelectionBox::IsPointAtMarker(Gdiplus::Point &point, const Gdiplus::Rect* rect)
+SelectionBoxMarkerState CSelectionBox::IsPointAtMarker(const Gdiplus::Point &point, const Gdiplus::Rect& rect) const
 {
-	const Gdiplus::Point ellipsePoints[4] = { Gdiplus::Point(rect->GetLeft(), rect->GetTop()),
-											Gdiplus::Point(rect->GetRight(), rect->GetTop()),
-											Gdiplus::Point(rect->GetRight(), rect->GetBottom()),
-											Gdiplus::Point(rect->GetLeft(), rect->GetBottom()) };
+	const Gdiplus::Point ellipsePoints[4] = { Gdiplus::Point(rect.GetLeft(), rect.GetTop()),
+											Gdiplus::Point(rect.GetRight(), rect.GetTop()),
+											Gdiplus::Point(rect.GetRight(), rect.GetBottom()),
+											Gdiplus::Point(rect.GetLeft(), rect.GetBottom()) };
 	const SelectionBoxMarkerState returnStates[4] = { SelectionBoxMarkerState::TOP_LEFT, 
 													SelectionBoxMarkerState::TOP_RIGHT,
 													SelectionBoxMarkerState::BOTTOM_RIGHT, 

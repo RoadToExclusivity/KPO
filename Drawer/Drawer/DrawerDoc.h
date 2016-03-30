@@ -14,7 +14,8 @@
 
 
 #pragma once
-#include "IShape.h"
+#include "CShapeController.h"
+#include "IControllerFactory.h"
 
 class CDrawerDoc : public CDocument
 {
@@ -24,11 +25,10 @@ protected: // create from serialization only
 
 // Attributes
 public:
-	const std::vector<IShape*> GetShapes() const;
-	void PushShape(IShape*);
-	IShape* CreateRectangle(LPRECT);
-	IShape* CreateEllipse(LPRECT);
-	IShape* CreateTriangle(LPRECT);
+	const std::vector<std::unique_ptr<CShapeController>> GetShapes() const;
+	bool CreateRectangle(LPRECT);
+	bool CreateEllipse(LPRECT);
+	bool CreateTriangle(LPRECT);
 // Operations
 public:
 
@@ -67,5 +67,8 @@ private:
 	const LONG ELLIPSE_HEIGHT_START = 200;
 	const LONG TRIANGLE_WIDTH_START = 100;
 	const LONG TRIANGLE_HEIGHT_START = 150;
-	std::vector<IShape*> m_shapes;
+	std::vector<std::unique_ptr<CShapeController>> m_shapesControllers;
+	CEllipseFactory m_ellipseFactory;
+	CRectangleFactory m_rectFactory;
+	CTriangleFactory m_triangleFactory;
 };

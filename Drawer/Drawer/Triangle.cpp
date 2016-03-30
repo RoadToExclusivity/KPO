@@ -1,29 +1,14 @@
 #include "stdafx.h"
 #include "Triangle.h"
 
-CTriangle::CTriangle(int x, int y, int width, int height)
-	:IShape(x, y, width, height), 
-	m_triangleDrawer(new CTriangleDrawer()),
+CTriangle::CTriangle(Gdiplus::Rect&& rect)
+	:IShape(std::forward<Gdiplus::Rect>(rect)), 
 	m_trianglePoints(4)
 {
 }
 
 CTriangle::~CTriangle()
 {
-	if (m_triangleDrawer)
-	{
-		delete m_triangleDrawer;
-	}
-}
-
-void CTriangle::Draw(HDC hDC, const Gdiplus::Rect* rect) const
-{
-	m_triangleDrawer->Draw(hDC, rect);
-}
-
-void CTriangle::DrawSelectionBox(HDC hDC, const Gdiplus::Rect* rect) const
-{
-	m_triangleDrawer->DrawSelectionBorder(hDC, rect);
 }
 
 bool CTriangle::IsCorrectSize(int newWidth, int newHeight) const
@@ -39,8 +24,8 @@ ShapeType CTriangle::GetShapeType() const
 void CTriangle::CalculateTriangleVertices() const
 {
 	auto boundingBox = GetBoundingBox();
-	INT x = boundingBox->GetLeft(), y = boundingBox->GetTop();
-	INT width = boundingBox->Width, height = boundingBox->Height;
+	INT x = boundingBox.GetLeft(), y = boundingBox.GetTop();
+	INT width = boundingBox.Width, height = boundingBox.Height;
 	m_trianglePoints[0] = Gdiplus::Point(x, y + height);
 	m_trianglePoints[1] = Gdiplus::Point(x + width, y + height);
 	m_trianglePoints[2] = Gdiplus::Point(x + width / 2, y);

@@ -67,8 +67,6 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	if( !CFrameWndEx::PreCreateWindow(cs) )
 		return FALSE;
 
-	cs.cx = 30;
-	cs.cy = 30;
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 

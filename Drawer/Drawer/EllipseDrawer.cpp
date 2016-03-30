@@ -22,13 +22,13 @@ CEllipseDrawer::~CEllipseDrawer()
 	}
 }
 
-void CEllipseDrawer::Draw(HDC hDC, const Gdiplus::Rect* rect) const
+void CEllipseDrawer::Draw(HDC hDC, const Gdiplus::Rect& rect) const
 {
-	if (hDC && rect && m_pen && m_brush)
+	if (hDC && m_pen && m_brush)
 	{
 		Gdiplus::Graphics g(hDC);
 		g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
-		g.DrawEllipse(m_pen, *rect);
-		g.FillEllipse(m_brush, *rect);
+		g.DrawEllipse(m_pen, rect);
+		g.FillEllipse(m_brush, rect);
 	}
 }

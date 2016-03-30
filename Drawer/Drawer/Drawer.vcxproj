@@ -106,13 +106,15 @@
     <ClInclude Include="DrawerView.h" />
     <ClInclude Include="Ellipse.h" />
     <ClInclude Include="EllipseDrawer.h" />
+    <ClInclude Include="IControllerFactory.h" />
     <ClInclude Include="IShape.h" />
+    <ClInclude Include="CShapeController.h" />
     <ClInclude Include="IShapeDrawer.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RectangleDrawer.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SelectionBox.h" />
+    <ClInclude Include="SelectionBoxDrawer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Triangle.h" />
@@ -125,11 +127,12 @@
     <ClCompile Include="Ellipse.cpp" />
     <ClCompile Include="EllipseDrawer.cpp" />
     <ClCompile Include="IShape.cpp" />
+    <ClCompile Include="CShapeController.cpp" />
     <ClCompile Include="IShapeDrawer.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RectangleDrawer.cpp" />
-    <ClCompile Include="SelectionBox.cpp" />
+    <ClCompile Include="SelectionBoxDrawer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -44,6 +44,7 @@
 
 #include <vector>
 #include <gdiplus.h>
+#include <memory>
 
 enum class SelectionBoxMarkerState
 {

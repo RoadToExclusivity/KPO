@@ -21,13 +21,13 @@ CRectangleDrawer::~CRectangleDrawer()
 	}
 }
 
-void CRectangleDrawer::Draw(HDC hDC, const Gdiplus::Rect* rect) const
+void CRectangleDrawer::Draw(HDC hDC, const Gdiplus::Rect& rect) const
 {
-	if (hDC && rect && m_pen && m_brush)
+	if (hDC && m_pen && m_brush)
 	{
 		Gdiplus::Graphics g(hDC);
 		g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
-		g.DrawRectangle(m_pen, *rect);
-		g.FillRectangle(m_brush, *rect);
+		g.DrawRectangle(m_pen, rect);
+		g.FillRectangle(m_brush, rect);
 	}
 }

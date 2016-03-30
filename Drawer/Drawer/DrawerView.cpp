@@ -108,15 +108,15 @@ void CDrawerView::OnDraw(CDC* pDC)
 	Gdiplus::Graphics g(bufferHDC);
 	g.FillRectangle(&m_backgroundBrush, 0, 0, clientRect->right, clientRect->bottom);
 
-	auto shapes = pDoc->GetShapes();
-	for (const auto shape: shapes)
+	auto shapeCtrls = pDoc->GetShapes();
+	for (const auto& ctrl : shapeCtrls)
 	{
-		shape->Draw(bufferHDC, shape->GetBoundingBox());
+		ctrl->Draw(bufferHDC);
 	}
 
 	if (m_selectedShapeIndex != -1)
 	{
-		shapes[m_selectedShapeIndex]->DrawSelectionBox(bufferHDC, shapes[m_selectedShapeIndex]->GetBoundingBox());
+		shapeCtrls[m_selectedShapeIndex]->DrawSelectionBox(bufferHDC);
 	}
 
 	RECT clipRect;
@@ -136,12 +136,11 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 	if (!pDoc)
 		return;
 
-	auto shapes = pDoc->GetShapes();
+	auto shapeCtrls = pDoc->GetShapes();
 	if (m_selectedShapeIndex != -1)
 	{
-		auto curShape = shapes[m_selectedShapeIndex];
-		auto boundingBox = curShape->GetBoundingBox();
-		m_resizeSelectionMarker = curShape->IsPointAtMarker(gdiPoint, boundingBox);
+		const auto& curShapeCtrl = shapeCtrls[m_selectedShapeIndex];
+		m_resizeSelectionMarker = curShapeCtrl->IsPointAtMarker(gdiPoint);
 		if (m_resizeSelectionMarker != SelectionBoxMarkerState::NONE)
 		{
 			m_isShapeResized = true;
@@ -152,14 +151,14 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 	}
 
 	m_selectedShapeIndex = -1;
-	for (int i = shapes.size() - 1; i >= 0; --i)
+	for (int i = shapeCtrls.size() - 1; i >= 0; --i)
 	{
-		if (shapes[i]->IsShapePoint(gdiPoint))
+		if (shapeCtrls[i]->IsShapePoint(gdiPoint))
 		{
 			m_isShapeDragged = true;
 			m_dragShapeIndex = i;
 			m_prevPointPosition = gdiPoint;
-			m_startPointPosition = shapes[i]->GetPosition();
+			m_startPointPosition = shapeCtrls[i]->GetPosition();
 			return;
 		}
 	}
@@ -176,9 +175,9 @@ void CDrawerView::OnMouseMove(UINT /* nFlags */, CPoint point)
 		if (!pDoc)
 			return;
 		
-		auto shapes = pDoc->GetShapes();
+		auto shapeCtrls = pDoc->GetShapes();
 
-		shapes[m_selectedShapeIndex]->ChangeShape(m_resizeSelectionMarker, Gdiplus::Point(point.x, point.y));
+		shapeCtrls[m_selectedShapeIndex]->ChangeShapeSize(m_resizeSelectionMarker, Gdiplus::Point(point.x, point.y));
 		if (m_resizeSelectionMarker == SelectionBoxMarkerState::BOTTOM_LEFT ||
 			m_resizeSelectionMarker == SelectionBoxMarkerState::TOP_RIGHT)
 		{
@@ -201,8 +200,8 @@ void CDrawerView::OnMouseMove(UINT /* nFlags */, CPoint point)
 				return;
 
 			m_cursorChangeToCross = true;
-			auto shapes = pDoc->GetShapes();
-			shapes[m_dragShapeIndex]->SetPosition(m_startPointPosition + Gdiplus::Point(point.x, point.y) - m_prevPointPosition);
+			auto shapeCtrls = pDoc->GetShapes();
+			shapeCtrls[m_dragShapeIndex]->SetPosition(m_startPointPosition + Gdiplus::Point(point.x, point.y) - m_prevPointPosition);
 
 			Invalidate();
 		}
@@ -224,14 +223,6 @@ void CDrawerView::OnLButtonUp(UINT /* nFlags */, CPoint point)
 			m_isShapeDragged = false;
 			m_cursorChangeToNormal = true;
 			OnSetCursor(this, 0, 0); //empty call for cursor changing runtime
-
-			CDrawerDoc* pDoc = GetDocument();
-			ASSERT_VALID(pDoc);
-			if (!pDoc)
-			{
-				m_dragShapeIndex = -1;
-				return;
-			}
 
 			m_selectedShapeIndex = m_dragShapeIndex;
 			m_dragShapeIndex = -1;

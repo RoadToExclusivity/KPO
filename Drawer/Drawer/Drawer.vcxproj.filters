@@ -57,9 +57,6 @@
     <ClInclude Include="IShape.h">
       <Filter>ShapeDefinitions</Filter>
     </ClInclude>
-    <ClInclude Include="SelectionBox.h">
-      <Filter>SelectionBorder</Filter>
-    </ClInclude>
     <ClInclude Include="Rectangle.h">
       <Filter>ShapeDefinitions</Filter>
     </ClInclude>
@@ -74,6 +71,15 @@
     </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>ShapeDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionBoxDrawer.h">
+      <Filter>SelectionBorder</Filter>
+    </ClInclude>
+    <ClInclude Include="CShapeController.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="IControllerFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,9 +107,6 @@
     <ClCompile Include="IShape.cpp">
       <Filter>ShapeDefinitions</Filter>
     </ClCompile>
-    <ClCompile Include="SelectionBox.cpp">
-      <Filter>SelectionBorder</Filter>
-    </ClCompile>
     <ClCompile Include="Rectangle.cpp">
       <Filter>ShapeDefinitions</Filter>
     </ClCompile>
@@ -118,6 +121,12 @@
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>ShapeDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectionBoxDrawer.cpp">
+      <Filter>SelectionBorder</Filter>
+    </ClCompile>
+    <ClCompile Include="CShapeController.cpp">
+      <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
