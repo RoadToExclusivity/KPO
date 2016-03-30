@@ -16,6 +16,7 @@
 #pragma once
 #include "CShapeController.h"
 #include "IControllerFactory.h"
+#include "PtrTypedefs.h"
 
 class CDrawerDoc : public CDocument
 {
@@ -25,7 +26,7 @@ protected: // create from serialization only
 
 // Attributes
 public:
-	const std::vector<std::unique_ptr<CShapeController>> GetShapes() const;
+	const std::vector<CtrlPtr> GetShapes() const;
 	bool CreateRectangle(LPRECT);
 	bool CreateEllipse(LPRECT);
 	bool CreateTriangle(LPRECT);
@@ -67,7 +68,7 @@ private:
 	const LONG ELLIPSE_HEIGHT_START = 200;
 	const LONG TRIANGLE_WIDTH_START = 100;
 	const LONG TRIANGLE_HEIGHT_START = 150;
-	std::vector<std::unique_ptr<CShapeController>> m_shapesControllers;
+	std::vector<CtrlPtr> m_shapesControllers;
 	CEllipseFactory m_ellipseFactory;
 	CRectangleFactory m_rectFactory;
 	CTriangleFactory m_triangleFactory;

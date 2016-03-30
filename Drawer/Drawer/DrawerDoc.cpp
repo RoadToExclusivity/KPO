@@ -48,7 +48,7 @@ bool CDrawerDoc::CreateRectangle(const LPRECT rect)
 														RECTANGLE_WIDTH_START, RECTANGLE_HEIGHT_START));
 	if (newRectController)
 	{
-		m_shapesControllers.push_back(std::unique_ptr<CShapeController>(newRectController));
+		m_shapesControllers.push_back(newRectController);
 	}
 	
 	return newRectController != nullptr;
@@ -63,7 +63,7 @@ bool CDrawerDoc::CreateEllipse(const LPRECT rect)
 														ELLIPSE_WIDTH_START, ELLIPSE_HEIGHT_START));
 	if (newEllipseController)
 	{
-		m_shapesControllers.emplace_back(std::unique_ptr<CShapeController>(newEllipseController));
+		m_shapesControllers.push_back(newEllipseController);
 	}
 
 	return newEllipseController != nullptr;
@@ -78,13 +78,13 @@ bool CDrawerDoc::CreateTriangle(const LPRECT rect)
 															TRIANGLE_WIDTH_START, TRIANGLE_HEIGHT_START));
 	if (newTriangleController)
 	{
-		m_shapesControllers.emplace_back(std::unique_ptr<CShapeController>(newTriangleController));
+		m_shapesControllers.push_back(newTriangleController);
 	}
 
 	return newTriangleController != nullptr;
 }
 
-const std::vector<std::unique_ptr<CShapeController>> CDrawerDoc::GetShapes() const
+const std::vector<CtrlPtr> CDrawerDoc::GetShapes() const
 {
 	return m_shapesControllers;
 }
@@ -127,7 +127,7 @@ void CDrawerDoc::Serialize(CArchive& ar)
 			ShapeType type = ShapeType(intType);
 			int x, y, width, height;
 			ar >> x >> y >> width >> height;
-			CShapeController* newShapeCtrl = nullptr;
+			CtrlPtr newShapeCtrl = nullptr;
 			switch (type)
 			{
 			case ShapeType::TRIANGLE:
@@ -142,7 +142,7 @@ void CDrawerDoc::Serialize(CArchive& ar)
 			}
 			if (newShapeCtrl)
 			{
-				m_shapesControllers.emplace_back(std::unique_ptr<CShapeController>(newShapeCtrl));
+				m_shapesControllers.push_back(newShapeCtrl);
 			}
 		}
 	}
