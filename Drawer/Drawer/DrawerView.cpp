@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CDrawerView, CView)
 	ON_WM_MOUSEMOVE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SETCURSOR()
+	ON_WM_KEYUP()
 	ON_COMMAND(ID_BUTTON_RECTANGLE, &CDrawerView::OnButtonRectangle)
 	ON_COMMAND(ID_BUTTON_ELLIPSE, &CDrawerView::OnButtonEllipse)
 	ON_COMMAND(ID_BUTTON_TRIANGLE, &CDrawerView::OnButtonTriangle)
@@ -46,13 +47,8 @@ END_MESSAGE_MAP()
 
 CDrawerView::CDrawerView()
 	:m_clientRectangle(nullptr),
-	m_isShapeDragged(false),
-	m_dragShapeIndex(-1),
-	m_prevPointPosition(),
-	m_startPointPosition(),
+	m_diffPointPosition(),
 	m_backgroundBrush(Gdiplus::Color(255, 255, 255)),
-	m_selectedShapeIndex(-1),
-	m_isShapeResized(false),
 	m_cursorChangeToCross(false),
 	m_cursorChangeToNormal(false),
 	m_cursorChangeToSizeEW(false),
@@ -114,9 +110,9 @@ void CDrawerView::OnDraw(CDC* pDC)
 		ctrl->Draw(bufferHDC);
 	}
 
-	if (m_selectedShapeIndex != -1)
+	if (pDoc->GetSelectedShapeIndex() != -1)
 	{
-		shapeCtrls[m_selectedShapeIndex]->DrawSelectionBox(bufferHDC);
+		shapeCtrls[pDoc->GetSelectedShapeIndex()]->DrawSelectionBox(bufferHDC);
 	}
 
 	RECT clipRect;
@@ -128,37 +124,33 @@ void CDrawerView::OnDraw(CDC* pDC)
 }
 
 void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
-{
-	Gdiplus::Point gdiPoint(point.x, point.y);
-	
+{	
 	CDrawerDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
 
+	Gdiplus::Point gdiPoint(point.x, point.y);
 	auto shapeCtrls = pDoc->GetShapes();
-	if (m_selectedShapeIndex != -1)
+	if (pDoc->GetSelectedShapeIndex() != -1)
 	{
-		const auto& curShapeCtrl = shapeCtrls[m_selectedShapeIndex];
+		const auto& curShapeCtrl = shapeCtrls[pDoc->GetSelectedShapeIndex()];
 		m_resizeSelectionMarker = curShapeCtrl->IsPointAtMarker(gdiPoint);
 		if (m_resizeSelectionMarker != SelectionBoxMarkerState::NONE)
 		{
-			m_isShapeResized = true;
+			pDoc->SetShapeResized();
 
 			return;
 		}
-		//add shape size changes
 	}
 
-	m_selectedShapeIndex = -1;
+	pDoc->SetSelectedShapeIndex(-1);
 	for (int i = shapeCtrls.size() - 1; i >= 0; --i)
 	{
 		if (shapeCtrls[i]->IsShapePoint(gdiPoint))
 		{
-			m_isShapeDragged = true;
-			m_dragShapeIndex = i;
-			m_prevPointPosition = gdiPoint;
-			m_startPointPosition = shapeCtrls[i]->GetPosition();
+			pDoc->SetDragged(i);
+			m_diffPointPosition = shapeCtrls[i]->GetPosition() - gdiPoint;
 			return;
 		}
 	}
@@ -166,66 +158,68 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 	Invalidate();
 }
 
-void CDrawerView::OnMouseMove(UINT /* nFlags */, CPoint point)
+void CDrawerView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (m_isShapeResized)
+	if (nFlags && MK_LBUTTON)
 	{
 		CDrawerDoc* pDoc = GetDocument();
 		ASSERT_VALID(pDoc);
 		if (!pDoc)
 			return;
-		
-		auto shapeCtrls = pDoc->GetShapes();
 
-		shapeCtrls[m_selectedShapeIndex]->ChangeShapeSize(m_resizeSelectionMarker, Gdiplus::Point(point.x, point.y));
-		if (m_resizeSelectionMarker == SelectionBoxMarkerState::BOTTOM_LEFT ||
-			m_resizeSelectionMarker == SelectionBoxMarkerState::TOP_RIGHT)
+		if (pDoc->IsShapeResized())
 		{
-			m_cursorChangeToSizeEW = true;
+			auto shapeCtrls = pDoc->GetShapes();
+
+			shapeCtrls[pDoc->GetSelectedShapeIndex()]->ChangeShapeSize(m_resizeSelectionMarker, Gdiplus::Point(point.x, point.y));
+			if (m_resizeSelectionMarker == SelectionBoxMarkerState::BOTTOM_LEFT ||
+				m_resizeSelectionMarker == SelectionBoxMarkerState::TOP_RIGHT)
+			{
+				m_cursorChangeToSizeEW = true;
+			}
+			else
+			{
+				m_cursorChangeToSizeWE = true;
+			}
+
+			Invalidate();
 		}
 		else
 		{
-			m_cursorChangeToSizeWE = true;
-		}
+			if (pDoc->IsShapeDragged())
+			{
+				m_cursorChangeToCross = true;
+				auto shapeCtrls = pDoc->GetShapes();
+				shapeCtrls[pDoc->GetDraggedShapeIndex()]->SetPosition(m_diffPointPosition + Gdiplus::Point(point.x, point.y));
 
-		Invalidate();
-	}
-	else
-	{
-		if (m_isShapeDragged)
-		{
-			CDrawerDoc* pDoc = GetDocument();
-			ASSERT_VALID(pDoc);
-			if (!pDoc)
-				return;
-
-			m_cursorChangeToCross = true;
-			auto shapeCtrls = pDoc->GetShapes();
-			shapeCtrls[m_dragShapeIndex]->SetPosition(m_startPointPosition + Gdiplus::Point(point.x, point.y) - m_prevPointPosition);
-
-			Invalidate();
+				Invalidate();
+			}
 		}
 	}
 }
 
-void CDrawerView::OnLButtonUp(UINT /* nFlags */, CPoint point)
+void CDrawerView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_isShapeResized)
+	CDrawerDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	if (pDoc->IsShapeResized())
 	{
-		m_isShapeResized = false;
+		pDoc->SetShapeUnresized();
 		m_cursorChangeToNormal = true;
 		OnSetCursor(this, 0, 0); //empty call for cursor changing runtime
 	}
 	else
 	{
-		if (m_isShapeDragged)
+		if (pDoc->IsShapeDragged())
 		{
-			m_isShapeDragged = false;
 			m_cursorChangeToNormal = true;
 			OnSetCursor(this, 0, 0); //empty call for cursor changing runtime
 
-			m_selectedShapeIndex = m_dragShapeIndex;
-			m_dragShapeIndex = -1;
+			pDoc->SetSelectedShapeIndex(pDoc->GetDraggedShapeIndex());
+			pDoc->SetUndragged();
 
 			Invalidate();
 		}
@@ -270,6 +264,24 @@ BOOL CDrawerView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	return CView::OnSetCursor(pWnd, nHitTest, message);
 }
 
+void CDrawerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (nChar == VK_DELETE)
+	{
+		CDrawerDoc* pDoc = GetDocument();
+		ASSERT_VALID(pDoc);
+		if (!pDoc)
+			return;
+
+		if (pDoc->GetSelectedShapeIndex() != -1 && !pDoc->IsShapeResized())
+		{
+			pDoc->DeleteShapeCtrl(pDoc->GetSelectedShapeIndex());
+			pDoc->SetSelectedShapeIndex(-1);
+
+			Invalidate();
+		}
+	}
+}
 // CDrawerView diagnostics
 
 #ifdef _DEBUG
@@ -295,30 +307,45 @@ CDrawerDoc* CDrawerView::GetDocument() const // non-debug version is inline
 
 void CDrawerView::OnButtonRectangle()
 {
-	auto rect = GetDocument()->CreateRectangle(GetClientRectangle());
+	CDrawerDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	auto rect = pDoc->CreateRectangle(GetClientRectangle());
 	if (rect)
 	{
-		m_selectedShapeIndex = -1;
+		pDoc->SetSelectedShapeIndex(-1);
 		Invalidate();
 	}
 }
 
 void CDrawerView::OnButtonEllipse()
 {
-	auto ellipse = GetDocument()->CreateEllipse(GetClientRectangle());
+	CDrawerDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	auto ellipse = pDoc->CreateEllipse(GetClientRectangle());
 	if (ellipse)
 	{
-		m_selectedShapeIndex = -1;
+		pDoc->SetSelectedShapeIndex(-1);
 		Invalidate();
 	}
 }
 
 void CDrawerView::OnButtonTriangle()
 {
-	auto triangle = GetDocument()->CreateTriangle(GetClientRectangle());
+	CDrawerDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	auto triangle = pDoc->CreateTriangle(GetClientRectangle());
 	if (triangle)
 	{
-		m_selectedShapeIndex = -1;
+		pDoc->SetSelectedShapeIndex(-1);
 		Invalidate();
 	}
 }

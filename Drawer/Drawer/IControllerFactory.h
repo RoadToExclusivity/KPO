@@ -1,7 +1,8 @@
 #pragma once
 #include "stdafx.h"
 #include "CShapeController.h"
-#include "PtrTypedefs.h"
+
+typedef std::shared_ptr<CShapeController> CtrlPtr;
 
 class IControllerFactory
 {

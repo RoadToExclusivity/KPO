@@ -28,7 +28,10 @@ CDrawerDoc::CDrawerDoc()
 	:m_shapesControllers(),
 	m_ellipseFactory(),
 	m_rectFactory(),
-	m_triangleFactory()
+	m_triangleFactory(),
+	m_isShapeResized(false),
+	m_selectedShapeIndex(-1),
+	m_dragShapeIndex(-1)
 {
 	// TODO: add one-time construction code here
 
@@ -37,6 +40,56 @@ CDrawerDoc::CDrawerDoc()
 CDrawerDoc::~CDrawerDoc()
 {
 	m_shapesControllers.clear();
+}
+
+void CDrawerDoc::SetShapeResized()
+{
+	m_isShapeResized = true;
+}
+
+void CDrawerDoc::SetShapeUnresized()
+{
+	m_isShapeResized = false;
+}
+
+bool CDrawerDoc::IsShapeResized() const
+{
+	return m_isShapeResized;
+}
+
+void CDrawerDoc::SetSelectedShapeIndex(int shapeIndex)
+{
+	m_selectedShapeIndex = shapeIndex;
+}
+
+int CDrawerDoc::GetSelectedShapeIndex() const
+{
+	return m_selectedShapeIndex;
+}
+
+void CDrawerDoc::SetDragged(int shapeIndex)
+{
+	m_dragShapeIndex = shapeIndex;
+}
+
+void CDrawerDoc::SetUndragged()
+{
+	m_dragShapeIndex = -1;
+}
+
+bool CDrawerDoc::IsShapeDragged() const
+{
+	return m_dragShapeIndex != -1;
+}
+
+int CDrawerDoc::GetDraggedShapeIndex() const
+{
+	return m_dragShapeIndex;
+}
+
+void CDrawerDoc::DeleteShapeCtrl(int index)
+{
+	m_shapesControllers.erase(m_shapesControllers.begin() + index);
 }
 
 bool CDrawerDoc::CreateRectangle(const LPRECT rect)
@@ -95,6 +148,9 @@ BOOL CDrawerDoc::OnNewDocument()
 		return FALSE;
 
 	m_shapesControllers.clear();
+	m_isShapeResized = false;
+	m_selectedShapeIndex = -1;
+	m_dragShapeIndex = -1;
 	
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)

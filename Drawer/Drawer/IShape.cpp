@@ -41,11 +41,14 @@ void IShape::ChangeShape(SelectionBoxMarkerState state, const Gdiplus::Point &ne
 		{
 			int newWidth = m_boundingBox.Width - newPoint.X + m_boundingBox.X;
 			int newHeight = m_boundingBox.Height - newPoint.Y + m_boundingBox.Y;
-			if (IsCorrectSize(newWidth, newHeight))
+			if (IsCorrectWidth(newWidth))
 			{
 				m_boundingBox.X = newPoint.X;
-				m_boundingBox.Y = newPoint.Y;
 				m_boundingBox.Width = newWidth;
+			}
+			if (IsCorrectHeight(newHeight))
+			{
+				m_boundingBox.Y = newPoint.Y;
 				m_boundingBox.Height = newHeight;
 			}
 		}
@@ -54,10 +57,13 @@ void IShape::ChangeShape(SelectionBoxMarkerState state, const Gdiplus::Point &ne
 		{
 			int newWidth = newPoint.X - m_boundingBox.X;
 			int newHeight = m_boundingBox.Height - newPoint.Y + m_boundingBox.Y;
-			if (IsCorrectSize(newWidth, newHeight))
+			if (IsCorrectWidth(newWidth))
+			{
+				m_boundingBox.Width = newWidth;
+			}
+			if (IsCorrectHeight(newHeight))
 			{
 				m_boundingBox.Y = newPoint.Y;
-				m_boundingBox.Width = newWidth;
 				m_boundingBox.Height = newHeight;
 			}
 		}
@@ -66,10 +72,13 @@ void IShape::ChangeShape(SelectionBoxMarkerState state, const Gdiplus::Point &ne
 		{
 			int newWidth = m_boundingBox.Width - newPoint.X + m_boundingBox.X;
 			int newHeight = newPoint.Y - m_boundingBox.Y;
-			if (IsCorrectSize(newWidth, newHeight))
+			if (IsCorrectWidth(newWidth))
 			{
 				m_boundingBox.X = newPoint.X;
 				m_boundingBox.Width = newWidth;
+			}
+			if (IsCorrectHeight(newHeight))
+			{
 				m_boundingBox.Height = newHeight;
 			}
 		}
@@ -78,9 +87,12 @@ void IShape::ChangeShape(SelectionBoxMarkerState state, const Gdiplus::Point &ne
 		{
 			int newWidth = newPoint.X - m_boundingBox.X;
 			int newHeight =  newPoint.Y - m_boundingBox.Y;
-			if (IsCorrectSize(newWidth, newHeight))
+			if (IsCorrectWidth(newWidth))
 			{
 				m_boundingBox.Width = newWidth;
+			}
+			if (IsCorrectHeight(newHeight))
+			{
 				m_boundingBox.Height = newHeight;
 			}
 		}

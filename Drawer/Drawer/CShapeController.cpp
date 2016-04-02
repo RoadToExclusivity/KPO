@@ -4,26 +4,12 @@
 CShapeController::CShapeController(IShape* shape, IShapeDrawer* shapeDrawer)
 	:m_shape(shape),
 	m_shapeDrawer(shapeDrawer),
-	m_selectionBox(new CSelectionBox())
+	m_selectionBox(new CSelectionBoxDrawer())
 {
 }
 
 CShapeController::~CShapeController()
 {
-	if (m_shape)
-	{
-		delete m_shape;
-	}
-
-	if (m_shapeDrawer)
-	{
-		delete m_shapeDrawer;
-	}
-
-	if (m_selectionBox)
-	{
-		delete m_selectionBox;
-	}
 }
 
 Gdiplus::Rect CShapeController::GetBoundingBox() const

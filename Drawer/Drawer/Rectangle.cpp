@@ -18,9 +18,14 @@ bool CRectangle::IsShapePoint(const Gdiplus::Point& inPoint) const
 			(inPoint.Y >= boundingBox.GetTop()) && (inPoint.Y <= boundingBox.GetBottom()));
 }
 
-bool CRectangle::IsCorrectSize(int newWidth, int newHeight) const
+bool CRectangle::IsCorrectWidth(int newWidth) const
 {
-	return (newWidth >= RECTANGLE_MIN_WIDTH && newHeight >= RECTANGLE_MIN_HEIGHT);
+	return newWidth >= RECTANGLE_MIN_WIDTH;
+}
+
+bool CRectangle::IsCorrectHeight(int newHeight) const
+{
+	return newHeight >= RECTANGLE_MIN_HEIGHT;
 }
 
 ShapeType CRectangle::GetShapeType() const

@@ -16,7 +16,6 @@
 #pragma once
 #include "CShapeController.h"
 #include "IControllerFactory.h"
-#include "PtrTypedefs.h"
 
 class CDrawerDoc : public CDocument
 {
@@ -30,6 +29,16 @@ public:
 	bool CreateRectangle(LPRECT);
 	bool CreateEllipse(LPRECT);
 	bool CreateTriangle(LPRECT);
+	void SetShapeResized();
+	void SetShapeUnresized();
+	bool IsShapeResized() const;
+	void SetSelectedShapeIndex(int shapeIndex);
+	int GetSelectedShapeIndex() const;
+	void SetDragged(int shapeIndex);
+	void SetUndragged();
+	bool IsShapeDragged() const;
+	int GetDraggedShapeIndex() const;
+	void DeleteShapeCtrl(int index);
 // Operations
 public:
 
@@ -72,4 +81,8 @@ private:
 	CEllipseFactory m_ellipseFactory;
 	CRectangleFactory m_rectFactory;
 	CTriangleFactory m_triangleFactory;
+
+	bool m_isShapeResized;
+	int m_selectedShapeIndex;
+	int m_dragShapeIndex;
 };

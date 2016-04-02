@@ -1,40 +1,21 @@
 #include "stdafx.h"
 #include "SelectionBoxDrawer.h"
 
-CSelectionBox::CSelectionBox()
-	:m_pen(nullptr),
-	m_circleBrush(nullptr)
+CSelectionBoxDrawer::CSelectionBoxDrawer()
+	:m_pen(Gdiplus::Color(255, 102, 51), 2.0f),
+	m_circleBrush(Gdiplus::Color(255, 102, 51))
 {
 }
 
-CSelectionBox::~CSelectionBox()
+CSelectionBoxDrawer::~CSelectionBoxDrawer()
 {
-	if (m_pen)
-	{
-		delete m_pen;
-	}
-
-	if (m_circleBrush)
-	{
-		delete m_circleBrush;
-	}
 }
 
-void CSelectionBox::DrawSelectionBorder(const HDC hDC, const Gdiplus::Rect& rect)
+void CSelectionBoxDrawer::DrawSelectionBorder(const HDC hDC, const Gdiplus::Rect& rect)
 {
-	if (!m_pen)
-	{
-		m_pen = new Gdiplus::Pen(Gdiplus::Color(255, 102, 51), 2.0f);
-	}
-
-	if (!m_circleBrush)
-	{
-		m_circleBrush = new Gdiplus::SolidBrush(Gdiplus::Color(255, 102, 51));
-	}
-
 	Gdiplus::Graphics g(hDC);
 	g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
-	g.DrawRectangle(m_pen, rect);
+	g.DrawRectangle(&m_pen, rect);
 	
 	const Gdiplus::Point ellipsePoints[4] = { Gdiplus::Point(rect.GetLeft(), rect.GetTop()),
 											Gdiplus::Point(rect.GetRight(), rect.GetTop()),
@@ -44,11 +25,11 @@ void CSelectionBox::DrawSelectionBorder(const HDC hDC, const Gdiplus::Rect& rect
 	{
 		Gdiplus::Rect ellipseRect(ellipsePoints[i].X - CIRCLE_RADIUS, ellipsePoints[i].Y - CIRCLE_RADIUS, 
 								CIRCLE_RADIUS * 2, CIRCLE_RADIUS * 2);
-		g.FillEllipse(m_circleBrush, ellipseRect);
+		g.FillEllipse(&m_circleBrush, ellipseRect);
 	}
 }
 
-SelectionBoxMarkerState CSelectionBox::IsPointAtMarker(const Gdiplus::Point &point, const Gdiplus::Rect& rect) const
+SelectionBoxMarkerState CSelectionBoxDrawer::IsPointAtMarker(const Gdiplus::Point &point, const Gdiplus::Rect& rect) const
 {
 	const Gdiplus::Point ellipsePoints[4] = { Gdiplus::Point(rect.GetLeft(), rect.GetTop()),
 											Gdiplus::Point(rect.GetRight(), rect.GetTop()),

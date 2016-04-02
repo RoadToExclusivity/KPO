@@ -27,9 +27,14 @@ bool CEllipse::IsShapePoint(const Gdiplus::Point& inPoint) const
 	return (sqXNum * sqEllipseB + sqYNum * sqEllipseA <= sqEllipseA * sqEllipseB);
 }
 
-bool CEllipse::IsCorrectSize(int newWidth, int newHeight) const
+bool CEllipse::IsCorrectWidth(int newWidth) const
 {
-	return (newWidth >= ELLIPSE_MIN_WIDTH && newHeight >= ELLIPSE_MIN_HEIGHT);
+	return newWidth >= ELLIPSE_MIN_WIDTH;
+}
+
+bool CEllipse::IsCorrectHeight(int newHeight) const
+{
+	return newHeight >= ELLIPSE_MIN_HEIGHT;
 }
 
 ShapeType CEllipse::GetShapeType() const

@@ -11,8 +11,6 @@
 #define IDB_FILELARGE                   114
 #define IDB_FILESMALL                   115
 #define IDR_POPUP_EDIT                  119
-#define ID_STATUSBAR_PANE1              120
-#define ID_STATUSBAR_PANE2              121
 #define IDS_STATUS_PANE1                122
 #define IDS_STATUS_PANE2                123
 #define IDR_MAINFRAME                   128
@@ -36,12 +34,8 @@
 #define IDS_EDIT_MENU                   306
 #define IDR_RIBBON                      307
 #define IDB_PNG_SHAPE_BUTTONS           321
-#define ID_WRITE_PASTEASHYPERLINK       32770
-#define ID_BUTTON2                      32772
-#define ID_BUTTON3                      32775
 #define ID_BUTTON_TRIANGLE              32779
 #define ID_BUTTON_ELLIPSE               32780
-#define ID_BUTTON9                      32781
 #define ID_BUTTON_RECTANGLE             32782
 
 // Next default values for new objects
@@ -49,7 +43,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        323
-#define _APS_NEXT_COMMAND_VALUE         32783
+#define _APS_NEXT_COMMAND_VALUE         32784
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

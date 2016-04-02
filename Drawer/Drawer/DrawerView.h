@@ -51,6 +51,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnButtonRectangle();
@@ -60,17 +61,12 @@ private:
 	const LPRECT GetClientRectangle();
 	LPRECT m_clientRectangle;
 
-	bool m_isShapeDragged;
-	bool m_isShapeResized;
 	bool m_cursorChangeToCross;
 	bool m_cursorChangeToNormal;
 	bool m_cursorChangeToSizeWE;
 	bool m_cursorChangeToSizeEW;
 	SelectionBoxMarkerState m_resizeSelectionMarker;
-	int m_dragShapeIndex;
-	int m_selectedShapeIndex;
-	Gdiplus::Point m_prevPointPosition;
-	Gdiplus::Point m_startPointPosition;
+	Gdiplus::Point m_diffPointPosition;
 	Gdiplus::SolidBrush m_backgroundBrush;
 };
 

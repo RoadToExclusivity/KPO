@@ -9,7 +9,8 @@ public:
 	CEllipse(Gdiplus::Rect&&);
 	~CEllipse();
 	bool IsShapePoint(const Gdiplus::Point&) const override;
-	bool IsCorrectSize(int newWidth, int newHeight) const override;
+	bool IsCorrectWidth(int newWidth) const override;
+	bool IsCorrectHeight(int newHeight) const override;
 	ShapeType GetShapeType() const override;
 
 private:

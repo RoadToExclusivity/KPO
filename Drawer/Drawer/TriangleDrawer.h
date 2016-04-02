@@ -10,7 +10,7 @@ public:
 	void Draw(HDC, const Gdiplus::Rect&) const override;
 
 private:
-	Gdiplus::Pen* m_pen;
-	Gdiplus::SolidBrush* m_brush;
+	Gdiplus::Pen m_pen;
+	Gdiplus::SolidBrush m_brush;
 };
 

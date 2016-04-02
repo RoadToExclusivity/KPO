@@ -8,7 +8,8 @@ public:
 	Gdiplus::Point GetPosition() const;
 	void SetPosition(const Gdiplus::Point&);
 	void ChangeShape(SelectionBoxMarkerState, const Gdiplus::Point&);
-	virtual bool IsCorrectSize(int newWidth, int newHeight) const = 0;
+	virtual bool IsCorrectWidth(int newWidth) const = 0;
+	virtual bool IsCorrectHeight(int newHeight) const = 0;
 	virtual ShapeType GetShapeType() const = 0;
 
 protected:

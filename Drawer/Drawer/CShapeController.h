@@ -6,6 +6,10 @@
 #include "Rectangle.h"
 #include "Triangle.h"
 
+typedef std::unique_ptr<IShape> ShapePtr;
+typedef std::unique_ptr<IShapeDrawer> ShapeDrawerPtr;
+typedef std::unique_ptr<CSelectionBoxDrawer> SelectionDrawerPtr;
+
 class CShapeController
 {
 public:
@@ -23,9 +27,9 @@ public:
 protected:
 	CShapeController(IShape*, IShapeDrawer*);
 private:
-	IShape* m_shape;
-	IShapeDrawer* m_shapeDrawer;
-	CSelectionBox* m_selectionBox;
+	ShapePtr m_shape;
+	ShapeDrawerPtr m_shapeDrawer;
+	SelectionDrawerPtr m_selectionBox;
 };
 
 class CEllipseController : public CShapeController

@@ -11,9 +11,14 @@ CTriangle::~CTriangle()
 {
 }
 
-bool CTriangle::IsCorrectSize(int newWidth, int newHeight) const
+bool CTriangle::IsCorrectWidth(int newWidth) const
 {
-	return (newWidth >= TRIANGLE_MIN_WIDTH && newHeight >= TRIANGLE_MIN_HEIGHT);
+	return newWidth >= TRIANGLE_MIN_WIDTH;
+}
+
+bool CTriangle::IsCorrectHeight(int newHeight) const
+{
+	return newHeight >= TRIANGLE_MIN_HEIGHT;
 }
 
 ShapeType CTriangle::GetShapeType() const
