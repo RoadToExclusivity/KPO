@@ -44,8 +44,9 @@ public:
 
 // Overrides
 public:
-	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
+	virtual BOOL OnNewDocument() override;
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPath) override;
+	virtual void Serialize(CArchive& ar) override;
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
 	virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
@@ -71,6 +72,8 @@ protected:
 #endif // SHARED_HANDLERS
 
 private:
+	void InitVars();
+
 	const LONG RECTANGLE_WIDTH_START = 200;
 	const LONG RECTANGLE_HEIGHT_START = 100;
 	const LONG ELLIPSE_WIDTH_START = 200;

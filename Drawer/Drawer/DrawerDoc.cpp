@@ -142,22 +142,33 @@ const std::vector<CtrlPtr> CDrawerDoc::GetShapes() const
 	return m_shapesControllers;
 }
 
+void CDrawerDoc::InitVars()
+{
+	m_shapesControllers.clear();
+	m_isShapeResized = false;
+	m_selectedShapeIndex = -1;
+	m_dragShapeIndex = -1;
+}
+
 BOOL CDrawerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	m_shapesControllers.clear();
-	m_isShapeResized = false;
-	m_selectedShapeIndex = -1;
-	m_dragShapeIndex = -1;
-	
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
+	InitVars();
 
 	return TRUE;
 }
 
+BOOL CDrawerDoc::OnOpenDocument(LPCTSTR lpszPath)
+{
+	InitVars();
+
+	if (!CDocument::OnOpenDocument(lpszPath))
+		return FALSE;
+
+	return TRUE;
+}
 // CDrawerDoc serialization
 
 void CDrawerDoc::Serialize(CArchive& ar)

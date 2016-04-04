@@ -15,7 +15,7 @@
 #pragma once
 
 
-class CDrawerView : public CView
+class CDrawerView : public CScrollView
 {
 protected: // create from serialization only
 	CDrawerView();
@@ -32,6 +32,7 @@ public:
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual void OnInitialUpdate() override;
 protected:
 
 // Implementation
@@ -52,19 +53,24 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnButtonRectangle();
 	afx_msg void OnButtonEllipse();
 	afx_msg void OnButtonTriangle();
 private:
+	static const int VIEW_WIDTH = 640;
+	static const int VIEW_HEIGHT = 480;
+
 	const LPRECT GetClientRectangle();
-	LPRECT m_clientRectangle;
+	RECT m_clientRectangle;
 
 	bool m_cursorChangeToCross;
 	bool m_cursorChangeToNormal;
 	bool m_cursorChangeToSizeWE;
 	bool m_cursorChangeToSizeEW;
+	bool m_cursorOutsideWindow;
 	SelectionBoxMarkerState m_resizeSelectionMarker;
 	Gdiplus::Point m_diffPointPosition;
 	Gdiplus::SolidBrush m_backgroundBrush;
