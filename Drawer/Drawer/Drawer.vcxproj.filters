@@ -22,6 +22,12 @@
     <Filter Include="SelectionBorder">
       <UniqueIdentifier>{c1292029-bf8f-4900-97ee-077c76f0bc11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ShapeController">
+      <UniqueIdentifier>{ffb6ec4c-7783-4a7d-95f4-42802e3d1ee5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands">
+      <UniqueIdentifier>{033fc676-36f9-45b2-be46-aa0e377222b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -76,10 +82,19 @@
       <Filter>SelectionBorder</Filter>
     </ClInclude>
     <ClInclude Include="CShapeController.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>ShapeController</Filter>
     </ClInclude>
     <ClInclude Include="IControllerFactory.h">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>ShapeController</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandStack.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -126,7 +141,13 @@
       <Filter>SelectionBorder</Filter>
     </ClCompile>
     <ClCompile Include="CShapeController.cpp">
-      <Filter>Файлы исходного кода</Filter>
+      <Filter>ShapeController</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandStack.cpp">
+      <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

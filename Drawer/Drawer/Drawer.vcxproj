@@ -101,6 +101,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Command.h" />
+    <ClInclude Include="CommandStack.h" />
     <ClInclude Include="Drawer.h" />
     <ClInclude Include="DrawerDoc.h" />
     <ClInclude Include="DrawerView.h" />
@@ -111,6 +113,7 @@
     <ClInclude Include="CShapeController.h" />
     <ClInclude Include="IShapeDrawer.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RectangleDrawer.h" />
     <ClInclude Include="Resource.h" />
@@ -121,6 +124,7 @@
     <ClInclude Include="TriangleDrawer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CommandStack.cpp" />
     <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="DrawerDoc.cpp" />
     <ClCompile Include="DrawerView.cpp" />
@@ -130,6 +134,7 @@
     <ClCompile Include="CShapeController.cpp" />
     <ClCompile Include="IShapeDrawer.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RectangleDrawer.cpp" />
     <ClCompile Include="SelectionBoxDrawer.cpp" />

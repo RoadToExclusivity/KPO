@@ -16,6 +16,8 @@
 #pragma once
 #include "CShapeController.h"
 #include "IControllerFactory.h"
+#include "CommandStack.h"
+#include "Command.h"
 
 class CDrawerDoc : public CDocument
 {
@@ -39,6 +41,9 @@ public:
 	bool IsShapeDragged() const;
 	int GetDraggedShapeIndex() const;
 	void DeleteShapeCtrl(int index);
+	void AddCommand(IShapeCommand*);
+	void Undo();
+	void Redo();
 // Operations
 public:
 
@@ -88,4 +93,6 @@ private:
 	bool m_isShapeResized;
 	int m_selectedShapeIndex;
 	int m_dragShapeIndex;
+
+	CCommandStack m_commands;
 };

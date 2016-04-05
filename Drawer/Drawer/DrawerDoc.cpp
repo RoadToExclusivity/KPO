@@ -31,7 +31,8 @@ CDrawerDoc::CDrawerDoc()
 	m_triangleFactory(),
 	m_isShapeResized(false),
 	m_selectedShapeIndex(-1),
-	m_dragShapeIndex(-1)
+	m_dragShapeIndex(-1),
+	m_commands()
 {
 	// TODO: add one-time construction code here
 
@@ -39,7 +40,7 @@ CDrawerDoc::CDrawerDoc()
 
 CDrawerDoc::~CDrawerDoc()
 {
-	m_shapesControllers.clear();
+	//m_shapesControllers.clear();
 }
 
 void CDrawerDoc::SetShapeResized()
@@ -90,6 +91,21 @@ int CDrawerDoc::GetDraggedShapeIndex() const
 void CDrawerDoc::DeleteShapeCtrl(int index)
 {
 	m_shapesControllers.erase(m_shapesControllers.begin() + index);
+}
+
+void CDrawerDoc::AddCommand(IShapeCommand* cmd)
+{
+	m_commands.Insert(cmd);
+}
+
+void CDrawerDoc::Undo()
+{
+	m_commands.Undo();
+}
+
+void CDrawerDoc::Redo()
+{
+	m_commands.Redo();
 }
 
 bool CDrawerDoc::CreateRectangle(const LPRECT rect)
@@ -148,6 +164,8 @@ void CDrawerDoc::InitVars()
 	m_isShapeResized = false;
 	m_selectedShapeIndex = -1;
 	m_dragShapeIndex = -1;
+
+	m_commands.Clear();
 }
 
 BOOL CDrawerDoc::OnNewDocument()

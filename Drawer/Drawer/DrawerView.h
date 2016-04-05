@@ -59,6 +59,8 @@ public:
 	afx_msg void OnButtonRectangle();
 	afx_msg void OnButtonEllipse();
 	afx_msg void OnButtonTriangle();
+	afx_msg void Undo();
+	afx_msg void Redo();
 private:
 	static const int VIEW_WIDTH = 640;
 	static const int VIEW_HEIGHT = 480;
@@ -73,6 +75,7 @@ private:
 	bool m_cursorOutsideWindow;
 	SelectionBoxMarkerState m_resizeSelectionMarker;
 	Gdiplus::Point m_diffPointPosition;
+	Gdiplus::Point m_startDragPoint;
 	Gdiplus::SolidBrush m_backgroundBrush;
 };
 

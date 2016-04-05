@@ -21,6 +21,7 @@
 
 #include "DrawerDoc.h"
 #include "DrawerView.h"
+#include "MoveCommand.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,11 +43,14 @@ BEGIN_MESSAGE_MAP(CDrawerView, CScrollView)
 	ON_COMMAND(ID_BUTTON_RECTANGLE, &CDrawerView::OnButtonRectangle)
 	ON_COMMAND(ID_BUTTON_ELLIPSE, &CDrawerView::OnButtonEllipse)
 	ON_COMMAND(ID_BUTTON_TRIANGLE, &CDrawerView::OnButtonTriangle)
+	ON_COMMAND(ID_EDIT_UNDO, &CDrawerView::Undo)
+	ON_COMMAND(ID_EDIT_REDO, &CDrawerView::Redo)
 END_MESSAGE_MAP()
 
 CDrawerView::CDrawerView()
 	:m_clientRectangle(),
 	m_diffPointPosition(),
+	m_startDragPoint(),
 	m_backgroundBrush(Gdiplus::Color(255, 255, 255)),
 	m_cursorChangeToCross(false),
 	m_cursorChangeToNormal(false),
@@ -155,6 +159,7 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 		{
 			pDoc->SetDragged(i);
 			m_diffPointPosition = shapeCtrls[i]->GetPosition() - gdiPoint;
+			m_startDragPoint = shapeCtrls[i]->GetPosition();
 			return;
 		}
 	}
@@ -219,7 +224,10 @@ void CDrawerView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 			m_cursorChangeToNormal = true;
 			OnSetCursor(this, 0, 0);
 
-			pDoc->SetSelectedShapeIndex(pDoc->GetDraggedShapeIndex());
+			int dragIndex = pDoc->GetDraggedShapeIndex();
+			auto shapeCtrls = pDoc->GetShapes();
+			pDoc->SetSelectedShapeIndex(dragIndex);
+			pDoc->AddCommand(new CMoveCommand(&*shapeCtrls[dragIndex], m_startDragPoint, shapeCtrls[dragIndex]->GetPosition()));
 			pDoc->SetUndragged();
 
 			Invalidate();
@@ -361,4 +369,26 @@ void CDrawerView::OnButtonTriangle()
 		pDoc->SetSelectedShapeIndex(-1);
 		Invalidate();
 	}
+}
+
+void CDrawerView::Undo()
+{
+	CDrawerDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	pDoc->Undo();
+	Invalidate();
+}
+
+void CDrawerView::Redo()
+{
+	CDrawerDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	pDoc->Redo();
+	Invalidate();
 }
