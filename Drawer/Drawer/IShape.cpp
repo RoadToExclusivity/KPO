@@ -2,8 +2,8 @@
 #include "SelectionBoxDrawer.h"
 #include "IShape.h"
 
-IShape::IShape(Gdiplus::Rect &&rect)
-	:m_boundingBox(std::forward<Gdiplus::Rect>(rect))
+IShape::IShape(const Gdiplus::Rect &rect)
+	:m_boundingBox(rect)
 {
 }
 
@@ -14,6 +14,11 @@ IShape::~IShape()
 Gdiplus::Rect IShape::GetBoundingBox() const
 {
 	return m_boundingBox;
+}
+
+void IShape::SetBoundingBox(const Gdiplus::Rect& rect)
+{
+	m_boundingBox = rect;
 }
 
 Gdiplus::Point IShape::GetBoundingBoxCenter() const

@@ -2,8 +2,8 @@
 #include "Rectangle.h"
 
 
-CRectangle::CRectangle(Gdiplus::Rect&& rect)
-	:IShape(std::forward<Gdiplus::Rect>(rect))
+CRectangle::CRectangle(const Gdiplus::Rect& rect)
+	:IShape(rect)
 {
 }
 

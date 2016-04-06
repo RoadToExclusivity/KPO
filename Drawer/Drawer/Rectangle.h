@@ -6,7 +6,7 @@ class CRectangle :
 	public IShape
 {
 public:
-	CRectangle(Gdiplus::Rect&&);
+	CRectangle(const Gdiplus::Rect&);
 	~CRectangle();
 	bool IsShapePoint(const Gdiplus::Point&) const override;
 	bool IsCorrectWidth(int newWidth) const override;

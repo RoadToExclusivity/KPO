@@ -17,6 +17,11 @@ Gdiplus::Rect CShapeController::GetBoundingBox() const
 	return m_shape->GetBoundingBox();
 }
 
+void CShapeController::SetBoundingBox(const Gdiplus::Rect& rect)
+{
+	m_shape->SetBoundingBox(rect);
+}
+
 void CShapeController::Draw(const HDC hdc) const
 {
 	m_shapeDrawer->Draw(hdc, m_shape->GetBoundingBox());

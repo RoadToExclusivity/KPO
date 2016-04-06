@@ -7,32 +7,32 @@ typedef std::shared_ptr<CShapeController> CtrlPtr;
 class IControllerFactory
 {
 public:
-	virtual CtrlPtr CreateShapeController(Gdiplus::Rect&&) const = 0;
+	virtual CtrlPtr CreateShapeController(const Gdiplus::Rect&) const = 0;
 };
 
 class CEllipseFactory : public IControllerFactory
 {
 public:
-	CtrlPtr CreateShapeController(Gdiplus::Rect&& rect) const
+	CtrlPtr CreateShapeController(const Gdiplus::Rect& rect) const
 	{
-		return CtrlPtr(new CEllipseController(std::forward<Gdiplus::Rect>(rect)));
+		return CtrlPtr(new CEllipseController(rect));
 	}
 };
 
 class CRectangleFactory : public IControllerFactory
 {
 public:
-	CtrlPtr CreateShapeController(Gdiplus::Rect&& rect) const
+	CtrlPtr CreateShapeController(const Gdiplus::Rect& rect) const
 	{
-		return CtrlPtr(new CRectangleController(std::forward<Gdiplus::Rect>(rect)));
+		return CtrlPtr(new CRectangleController(rect));
 	}
 };
 
 class CTriangleFactory : public IControllerFactory
 {
 public:
-	CtrlPtr CreateShapeController(Gdiplus::Rect&& rect) const
+	CtrlPtr CreateShapeController(const Gdiplus::Rect& rect) const
 	{
-		return CtrlPtr(new CTriangleController(std::forward<Gdiplus::Rect>(rect)));
+		return CtrlPtr(new CTriangleController(rect));
 	}
 };

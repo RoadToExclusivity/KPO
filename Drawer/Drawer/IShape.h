@@ -4,6 +4,7 @@ class IShape
 public:
 	virtual ~IShape();
 	Gdiplus::Rect GetBoundingBox() const;
+	void SetBoundingBox(const Gdiplus::Rect&);
 	virtual bool IsShapePoint(const Gdiplus::Point&) const = 0;
 	Gdiplus::Point GetPosition() const;
 	void SetPosition(const Gdiplus::Point&);
@@ -13,7 +14,7 @@ public:
 	virtual ShapeType GetShapeType() const = 0;
 
 protected:
-	IShape(Gdiplus::Rect &&rect);
+	IShape(const Gdiplus::Rect &rect);
 	Gdiplus::Point GetBoundingBoxCenter() const;
 
 private:

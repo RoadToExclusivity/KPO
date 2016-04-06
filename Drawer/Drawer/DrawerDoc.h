@@ -28,9 +28,8 @@ protected: // create from serialization only
 // Attributes
 public:
 	const std::vector<CtrlPtr> GetShapes() const;
-	bool CreateRectangle(LPRECT);
-	bool CreateEllipse(LPRECT);
-	bool CreateTriangle(LPRECT);
+	size_t GetShapesCount() const;
+	bool CreateShapeCtrl(ShapeType type, const Gdiplus::Rect& rect, int pos = -1);
 	void SetShapeResized();
 	void SetShapeUnresized();
 	bool IsShapeResized() const;
@@ -44,6 +43,8 @@ public:
 	void AddCommand(IShapeCommand*);
 	void Undo();
 	void Redo();
+	bool CanUndo() const;
+	bool CanRedo() const;
 // Operations
 public:
 
@@ -79,16 +80,11 @@ protected:
 private:
 	void InitVars();
 
-	const LONG RECTANGLE_WIDTH_START = 200;
-	const LONG RECTANGLE_HEIGHT_START = 100;
-	const LONG ELLIPSE_WIDTH_START = 200;
-	const LONG ELLIPSE_HEIGHT_START = 200;
-	const LONG TRIANGLE_WIDTH_START = 100;
-	const LONG TRIANGLE_HEIGHT_START = 150;
 	std::vector<CtrlPtr> m_shapesControllers;
 	CEllipseFactory m_ellipseFactory;
 	CRectangleFactory m_rectFactory;
 	CTriangleFactory m_triangleFactory;
+	IControllerFactory* m_factories[3];
 
 	bool m_isShapeResized;
 	int m_selectedShapeIndex;

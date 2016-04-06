@@ -15,6 +15,7 @@ class CShapeController
 public:
 	virtual ~CShapeController();
 	Gdiplus::Rect GetBoundingBox() const;
+	void SetBoundingBox(const Gdiplus::Rect&);
 	void Draw(const HDC) const;
 	void DrawSelectionBox(const HDC) const;
 	Gdiplus::Point GetPosition() const;
@@ -35,8 +36,8 @@ private:
 class CEllipseController : public CShapeController
 {
 public:
-	CEllipseController(Gdiplus::Rect &&rect)
-		:CShapeController(new CEllipse(std::forward<Gdiplus::Rect>(rect)), new CEllipseDrawer())
+	CEllipseController(const Gdiplus::Rect &rect)
+		:CShapeController(new CEllipse(rect), new CEllipseDrawer())
 	{
 	}
 };
@@ -44,8 +45,8 @@ public:
 class CRectangleController : public CShapeController
 {
 public:
-	CRectangleController(Gdiplus::Rect &&rect)
-		:CShapeController(new CRectangle(std::forward<Gdiplus::Rect>(rect)), new CRectangleDrawer())
+	CRectangleController(const Gdiplus::Rect &rect)
+		:CShapeController(new CRectangle(rect), new CRectangleDrawer())
 	{
 	}
 };
@@ -53,8 +54,8 @@ public:
 class CTriangleController : public CShapeController
 {
 public:
-	CTriangleController(Gdiplus::Rect &&rect)
-		:CShapeController(new CTriangle(std::forward<Gdiplus::Rect>(rect)), new CTriangleDrawer())
+	CTriangleController(const Gdiplus::Rect &rect)
+		:CShapeController(new CTriangle(rect), new CTriangleDrawer())
 	{
 	}
 };

@@ -1,6 +1,8 @@
 #pragma once
 #include "Command.h"
 
+typedef std::shared_ptr<IShapeCommand> CmdPtr;
+
 class CCommandStack
 {
 public:
@@ -17,6 +19,6 @@ public:
 
 private:
 	int m_curCmd;
-	std::vector<IShapeCommand*> m_commands;
+	std::vector<CmdPtr> m_commands;
 };
 

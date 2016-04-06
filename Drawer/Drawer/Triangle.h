@@ -6,7 +6,7 @@ class CTriangle :
 	public IShape
 {
 public:
-	CTriangle(Gdiplus::Rect&&);
+	CTriangle(const Gdiplus::Rect&);
 	~CTriangle();
 	bool IsShapePoint(const Gdiplus::Point&) const override;
 	bool IsCorrectWidth(int newWidth) const override;

@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Ellipse.h"
 
-CEllipse::CEllipse(Gdiplus::Rect&& rect)
-	:IShape(std::forward<Gdiplus::Rect>(rect))
+CEllipse::CEllipse(const Gdiplus::Rect& rect)
+	:IShape(rect)
 {
 }
 

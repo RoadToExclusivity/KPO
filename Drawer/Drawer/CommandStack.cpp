@@ -20,7 +20,11 @@ void CCommandStack::Clear()
 
 void CCommandStack::Insert(IShapeCommand* cmd)
 {
-	m_commands.push_back(cmd);
+	if (m_commands.size() > 0 && ((size_t)(m_curCmd + 1) < m_commands.size()))
+	{
+		m_commands.erase(m_commands.begin() + 1 + m_curCmd, m_commands.end());
+	}
+	m_commands.push_back(CmdPtr(cmd));
 	m_curCmd++;
 }
 
@@ -35,9 +39,9 @@ void CCommandStack::Undo()
 
 void CCommandStack::Redo()
 {
-	if (m_curCmd < m_commands.size())
+	if ((size_t)(m_curCmd + 1) < m_commands.size())
 	{
-		m_commands[m_curCmd]->Redo();
+		m_commands[m_curCmd + 1]->Redo();
 		m_curCmd++;
 	}
 }
@@ -49,5 +53,5 @@ bool CCommandStack::CanUndo() const
 
 bool CCommandStack::CanRedo() const
 {
-	return m_curCmd < m_commands.size();
+	return (size_t)(m_curCmd + 1) < m_commands.size();
 }

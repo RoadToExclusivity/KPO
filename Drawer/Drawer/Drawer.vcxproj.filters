@@ -96,6 +96,15 @@
     <ClInclude Include="CommandStack.h">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="CreateShapeCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteShapeCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizeCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Drawer.cpp">
@@ -147,6 +156,15 @@
       <Filter>Commands</Filter>
     </ClCompile>
     <ClCompile Include="CommandStack.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateShapeCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="DeleteShapeCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizeCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>

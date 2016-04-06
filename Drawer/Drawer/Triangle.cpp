@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Triangle.h"
 
-CTriangle::CTriangle(Gdiplus::Rect&& rect)
-	:IShape(std::forward<Gdiplus::Rect>(rect)), 
+CTriangle::CTriangle(const Gdiplus::Rect& rect)
+	:IShape(rect), 
 	m_trianglePoints(4)
 {
 }

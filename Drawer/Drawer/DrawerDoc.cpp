@@ -29,18 +29,20 @@ CDrawerDoc::CDrawerDoc()
 	m_ellipseFactory(),
 	m_rectFactory(),
 	m_triangleFactory(),
+	m_factories(),
 	m_isShapeResized(false),
 	m_selectedShapeIndex(-1),
 	m_dragShapeIndex(-1),
 	m_commands()
 {
-	// TODO: add one-time construction code here
-
+	m_factories[0] = &m_triangleFactory;
+	m_factories[1] = &m_rectFactory;
+	m_factories[2] = &m_ellipseFactory;
+	//m_factories({ &m_triangleFactory, &m_rectFactory, &m_ellipseFactory });
 }
 
 CDrawerDoc::~CDrawerDoc()
 {
-	//m_shapesControllers.clear();
 }
 
 void CDrawerDoc::SetShapeResized()
@@ -108,54 +110,47 @@ void CDrawerDoc::Redo()
 	m_commands.Redo();
 }
 
-bool CDrawerDoc::CreateRectangle(const LPRECT rect)
+bool CDrawerDoc::CanUndo() const
 {
-	LONG width = rect->right;
-	LONG height = rect->bottom;
-	auto newRectController =  m_rectFactory.CreateShapeController(Gdiplus::Rect((width - RECTANGLE_WIDTH_START) / 2, 
-														(height - RECTANGLE_HEIGHT_START) / 2,
-														RECTANGLE_WIDTH_START, RECTANGLE_HEIGHT_START));
+	return m_commands.CanUndo();
+}
+
+bool CDrawerDoc::CanRedo() const
+{
+	return m_commands.CanRedo();
+}
+
+bool CDrawerDoc::CreateShapeCtrl(ShapeType type, const Gdiplus::Rect& rect, int pos)
+{
+	LONG width = rect.Width;
+	LONG height = rect.Height;
+
+	IControllerFactory* factory = m_factories[(int)type];
+	CtrlPtr newRectController = factory->CreateShapeController(rect);
+
 	if (newRectController)
 	{
-		m_shapesControllers.push_back(newRectController);
+		if (pos == -1)
+		{
+			m_shapesControllers.push_back(newRectController);
+		}
+		else
+		{
+			m_shapesControllers.insert(m_shapesControllers.cbegin() + pos, newRectController);
+		}
 	}
-	
+
 	return newRectController != nullptr;
-}
-
-bool CDrawerDoc::CreateEllipse(const LPRECT rect)
-{
-	LONG width = rect->right;
-	LONG height = rect->bottom;
-	auto newEllipseController = m_ellipseFactory.CreateShapeController(Gdiplus::Rect((width - ELLIPSE_WIDTH_START) / 2,
-														(height - ELLIPSE_HEIGHT_START) / 2,
-														ELLIPSE_WIDTH_START, ELLIPSE_HEIGHT_START));
-	if (newEllipseController)
-	{
-		m_shapesControllers.push_back(newEllipseController);
-	}
-
-	return newEllipseController != nullptr;
-}
-
-bool CDrawerDoc::CreateTriangle(const LPRECT rect)
-{
-	LONG width = rect->right;
-	LONG height = rect->bottom;
-	auto newTriangleController = m_triangleFactory.CreateShapeController(Gdiplus::Rect((width - TRIANGLE_WIDTH_START) / 2,
-															(height - TRIANGLE_HEIGHT_START) / 2,
-															TRIANGLE_WIDTH_START, TRIANGLE_HEIGHT_START));
-	if (newTriangleController)
-	{
-		m_shapesControllers.push_back(newTriangleController);
-	}
-
-	return newTriangleController != nullptr;
 }
 
 const std::vector<CtrlPtr> CDrawerDoc::GetShapes() const
 {
 	return m_shapesControllers;
+}
+
+size_t CDrawerDoc::GetShapesCount() const
+{
+	return m_shapesControllers.size();
 }
 
 void CDrawerDoc::InitVars()
@@ -212,23 +207,7 @@ void CDrawerDoc::Serialize(CArchive& ar)
 			ShapeType type = ShapeType(intType);
 			int x, y, width, height;
 			ar >> x >> y >> width >> height;
-			CtrlPtr newShapeCtrl = nullptr;
-			switch (type)
-			{
-			case ShapeType::TRIANGLE:
-				newShapeCtrl = m_triangleFactory.CreateShapeController(Gdiplus::Rect(x, y, width, height));
-				break;
-			case ShapeType::RECTANGLE:
-				newShapeCtrl = m_rectFactory.CreateShapeController(Gdiplus::Rect(x, y, width, height));
-				break;
-			case ShapeType::ELLIPSE:
-				newShapeCtrl = m_ellipseFactory.CreateShapeController(Gdiplus::Rect(x, y, width, height));
-				break;
-			}
-			if (newShapeCtrl)
-			{
-				m_shapesControllers.push_back(newShapeCtrl);
-			}
+			CreateShapeCtrl(type, Gdiplus::Rect(x, y, width, height));
 		}
 	}
 }

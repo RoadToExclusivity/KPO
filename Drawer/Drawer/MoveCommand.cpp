@@ -1,8 +1,10 @@
 #include "stdafx.h"
+#include "DrawerDoc.h"
 #include "MoveCommand.h"
 
-CMoveCommand::CMoveCommand(CShapeController* ctrl, const Gdiplus::Point& from, const Gdiplus::Point& to)
-	:IShapeCommand(ctrl),
+CMoveCommand::CMoveCommand(CDrawerDoc* doc, size_t shapeIndex, const Gdiplus::Point& from, const Gdiplus::Point& to)
+	:IShapeCommand(doc),
+	m_shapeIndex(shapeIndex),
 	m_from(from), 
 	m_to(to)
 {
@@ -10,10 +12,12 @@ CMoveCommand::CMoveCommand(CShapeController* ctrl, const Gdiplus::Point& from, c
 
 void CMoveCommand::Undo()
 {
-	shapeCtrl->SetPosition(m_from);
+	auto &ctrl = m_doc->GetShapes();
+	ctrl[m_shapeIndex]->SetPosition(m_from);
 }
 
 void CMoveCommand::Redo()
 {
-	shapeCtrl->SetPosition(m_to);
+	auto &ctrl = m_doc->GetShapes();
+	ctrl[m_shapeIndex]->SetPosition(m_to);
 }

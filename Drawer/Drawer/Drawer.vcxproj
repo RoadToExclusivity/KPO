@@ -103,6 +103,8 @@
   <ItemGroup>
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandStack.h" />
+    <ClInclude Include="CreateShapeCommand.h" />
+    <ClInclude Include="DeleteShapeCommand.h" />
     <ClInclude Include="Drawer.h" />
     <ClInclude Include="DrawerDoc.h" />
     <ClInclude Include="DrawerView.h" />
@@ -116,6 +118,7 @@
     <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RectangleDrawer.h" />
+    <ClInclude Include="ResizeCommand.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SelectionBoxDrawer.h" />
     <ClInclude Include="stdafx.h" />
@@ -125,6 +128,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandStack.cpp" />
+    <ClCompile Include="CreateShapeCommand.cpp" />
+    <ClCompile Include="DeleteShapeCommand.cpp" />
     <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="DrawerDoc.cpp" />
     <ClCompile Include="DrawerView.cpp" />
@@ -137,6 +142,7 @@
     <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RectangleDrawer.cpp" />
+    <ClCompile Include="ResizeCommand.cpp" />
     <ClCompile Include="SelectionBoxDrawer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

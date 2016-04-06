@@ -59,24 +59,35 @@ public:
 	afx_msg void OnButtonRectangle();
 	afx_msg void OnButtonEllipse();
 	afx_msg void OnButtonTriangle();
-	afx_msg void Undo();
-	afx_msg void Redo();
+	afx_msg void OnEditRedo();
+	afx_msg void OnEditUndo();
+	afx_msg void OnUpdateEditUndo(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateEditRedo(CCmdUI *pCmdUI);
+
 private:
 	static const int VIEW_WIDTH = 640;
 	static const int VIEW_HEIGHT = 480;
 
-	const LPRECT GetClientRectangle();
+	Gdiplus::Rect GetClientRectangle();
+	void CreateShape(ShapeType type);
 	RECT m_clientRectangle;
 
 	bool m_cursorChangeToCross;
 	bool m_cursorChangeToNormal;
 	bool m_cursorChangeToSizeWE;
 	bool m_cursorChangeToSizeEW;
-	bool m_cursorOutsideWindow;
 	SelectionBoxMarkerState m_resizeSelectionMarker;
 	Gdiplus::Point m_diffPointPosition;
 	Gdiplus::Point m_startDragPoint;
+	Gdiplus::Rect m_startResizeRect;
 	Gdiplus::SolidBrush m_backgroundBrush;
+
+	const LONG RECTANGLE_WIDTH_START = 200;
+	const LONG RECTANGLE_HEIGHT_START = 100;
+	const LONG ELLIPSE_WIDTH_START = 200;
+	const LONG ELLIPSE_HEIGHT_START = 200;
+	const LONG TRIANGLE_WIDTH_START = 100;
+	const LONG TRIANGLE_HEIGHT_START = 150;
 };
 
 #ifndef _DEBUG  // debug version in DrawerView.cpp

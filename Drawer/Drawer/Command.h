@@ -1,5 +1,6 @@
 #pragma once
-#include "CShapeController.h"
+
+class CDrawerDoc;
 
 class IShapeCommand
 {
@@ -9,6 +10,6 @@ public:
 	virtual void Redo() = 0;
 
 protected:
-	CShapeController* shapeCtrl;
-	IShapeCommand(CShapeController* ctrl) : shapeCtrl(ctrl) {};
+	CDrawerDoc* m_doc;
+	IShapeCommand(CDrawerDoc* doc) : m_doc(doc) {};
 };

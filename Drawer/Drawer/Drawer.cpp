@@ -35,7 +35,6 @@ BEGIN_MESSAGE_MAP(CDrawerApp, CWinAppEx)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 END_MESSAGE_MAP()
 
-
 // CDrawerApp construction
 
 CDrawerApp::CDrawerApp()
@@ -199,4 +198,3 @@ void CDrawerApp::SaveCustomState()
 }
 
 // CDrawerApp message handlers
-

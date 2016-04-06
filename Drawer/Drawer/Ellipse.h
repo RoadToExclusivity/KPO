@@ -6,7 +6,7 @@ class CEllipse :
 	public IShape
 {
 public:
-	CEllipse(Gdiplus::Rect&&);
+	CEllipse(const Gdiplus::Rect&);
 	~CEllipse();
 	bool IsShapePoint(const Gdiplus::Point&) const override;
 	bool IsCorrectWidth(int newWidth) const override;
