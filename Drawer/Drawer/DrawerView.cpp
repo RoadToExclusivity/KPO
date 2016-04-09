@@ -40,7 +40,6 @@ BEGIN_MESSAGE_MAP(CDrawerView, CScrollView)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_ERASEBKGND()
-	ON_WM_SETCURSOR()
 	ON_WM_KEYUP()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_BUTTON_RECTANGLE, &CDrawerView::OnButtonRectangle)
@@ -57,46 +56,35 @@ CDrawerView::CDrawerView()
 	m_diffPointPosition(),
 	m_startDragPoint(),
 	m_startResizeRect(),
+	m_cursorCross(false),
+	m_cursorNE(false),
+	m_cursorNW(false),
 	m_backgroundBrush(Gdiplus::Color(255, 255, 255)),
-	m_cursorChangeToCross(false),
-	m_cursorChangeToNormal(false),
-	m_cursorChangeToSizeEW(false),
-	m_cursorChangeToSizeWE(false),
 	m_resizeSelectionMarker(SelectionBoxMarkerState::NONE)
 {
+	SetStandardCursor();
 }
 
 CDrawerView::~CDrawerView()
 {
 }
 
-Gdiplus::Rect CDrawerView::GetClientRectangle()
-{
-	GetClientRect(&m_clientRectangle);
-	m_clientRectangle.right = max(VIEW_WIDTH, m_clientRectangle.right);
-	m_clientRectangle.bottom = max(VIEW_HEIGHT, m_clientRectangle.bottom);
-
-	return Gdiplus::Rect(0, 0, m_clientRectangle.right, m_clientRectangle.bottom);
-}
-
 BOOL CDrawerView::PreCreateWindow(CREATESTRUCT& cs)
 {
+	cs.cx = VIEW_WIDTH;
+	cs.cy = VIEW_HEIGHT;
+
 	return CScrollView::PreCreateWindow(cs);
 }
 
 void CDrawerView::OnInitialUpdate()
 {	
-	auto clientRect = GetClientRectangle();
-
-	CSize size;
-	size.cx = clientRect.Width;
-	size.cy = clientRect.Height;
-	SetScrollSizes(MM_TEXT, size);
+	SetScrollsState();
 
 	CScrollView::OnInitialUpdate();
 }
 
-// CDrawerView drawing
+// CDrawerView message functions
 
 void CDrawerView::OnDraw(CDC* pDC)
 {
@@ -142,7 +130,7 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 	if (!pDoc)
 		return;
 
-	//SetCapture();
+	SetCapture();
 	Gdiplus::Point gdiPoint(point.x, point.y);
 	auto shapeCtrls = pDoc->GetShapes();
 	if (pDoc->GetSelectedShapeIndex() != -1)
@@ -166,6 +154,7 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 			pDoc->SetDragged(i);
 			m_diffPointPosition = shapeCtrls[i]->GetPosition() - gdiPoint;
 			m_startDragPoint = shapeCtrls[i]->GetPosition();
+
 			return;
 		}
 	}
@@ -180,19 +169,29 @@ void CDrawerView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	if (!pDoc)
 		return;
 
+	Gdiplus::Point gdiPoint(point.x, point.y);
+	NormalizeGdiPoint(gdiPoint);
+
 	if (pDoc->IsShapeResized())
 	{
 		auto shapeCtrls = pDoc->GetShapes();
-
-		shapeCtrls[pDoc->GetSelectedShapeIndex()]->ChangeShapeSize(m_resizeSelectionMarker, Gdiplus::Point(point.x, point.y));
+		shapeCtrls[pDoc->GetSelectedShapeIndex()]->ChangeShapeSize(m_resizeSelectionMarker, gdiPoint);
 		if (m_resizeSelectionMarker == SelectionBoxMarkerState::BOTTOM_LEFT ||
 			m_resizeSelectionMarker == SelectionBoxMarkerState::TOP_RIGHT)
 		{
-			m_cursorChangeToSizeEW = true;
+			if (!m_cursorNE)
+			{
+				SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZENESW));
+				m_cursorNE = true;
+			}
 		}
 		else
 		{
-			m_cursorChangeToSizeWE = true;
+			if (!m_cursorNW)
+			{
+				SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZENWSE));
+				m_cursorNW = true;
+			}
 		}
 
 		Invalidate();
@@ -201,11 +200,15 @@ void CDrawerView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	{
 		if (pDoc->IsShapeDragged())
 		{
-			m_cursorChangeToCross = true;
+			if (!m_cursorCross)
+			{
+				SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEALL));
+				m_cursorCross = true;
+			}
+
 			auto shapeCtrls = pDoc->GetShapes();
-			auto newPos = m_diffPointPosition + Gdiplus::Point(point.x, point.y);
-			//if (newPos.X < 0) newPos.X = 0;
-			//if (newPos.Y < 0) newPos.Y = 0;
+			auto newPos = m_diffPointPosition + gdiPoint;
+
 			shapeCtrls[pDoc->GetDraggedShapeIndex()]->SetPosition(newPos);
 			Invalidate();
 		}
@@ -222,12 +225,15 @@ void CDrawerView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	if (pDoc->IsShapeResized())
 	{
 		pDoc->SetShapeUnresized();
-		m_cursorChangeToNormal = true;
-		OnSetCursor(this, 0, 0);
+		SetStandardCursor();
 
 		auto& shapeCtrls = pDoc->GetShapes();
 		int resizeIndex = pDoc->GetSelectedShapeIndex();
-		pDoc->AddCommand(new CResizeCommand(pDoc, resizeIndex, m_startResizeRect, shapeCtrls[resizeIndex]->GetBoundingBox()));
+		auto shapeRect = shapeCtrls[resizeIndex]->GetBoundingBox();
+		if (!IsEqualRects(m_startResizeRect, shapeRect))
+		{
+			pDoc->AddCommand(new CResizeCommand(pDoc, resizeIndex, m_startResizeRect, shapeRect));
+		}
 
 		Invalidate();
 	}
@@ -235,57 +241,27 @@ void CDrawerView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	{
 		if (pDoc->IsShapeDragged())
 		{
-			m_cursorChangeToNormal = true;
-			OnSetCursor(this, 0, 0);
+			SetStandardCursor();
 
 			int dragIndex = pDoc->GetDraggedShapeIndex();
 			auto& shapeCtrls = pDoc->GetShapes();
 			pDoc->SetSelectedShapeIndex(dragIndex);
-			pDoc->AddCommand(new CMoveCommand(pDoc, dragIndex, m_startDragPoint, shapeCtrls[dragIndex]->GetPosition()));
+			auto shapePos = shapeCtrls[dragIndex]->GetPosition();
+			if (!IsEqualPoints(m_startDragPoint, shapePos))
+			{
+				pDoc->AddCommand(new CMoveCommand(pDoc, dragIndex, m_startDragPoint, shapePos));
+			}
 			pDoc->SetUndragged();
 
 			Invalidate();
 		}
 	}
-	//ReleaseCapture();
+	ReleaseCapture();
 }
 
 BOOL CDrawerView::OnEraseBkgnd(CDC* pDC)
 {
 	return FALSE;
-}
-
-BOOL CDrawerView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
-{
-	if (m_cursorChangeToNormal)
-	{
-		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
-		m_cursorChangeToNormal = false;
-		return TRUE;
-	}
-
-	if (m_cursorChangeToCross)
-	{
-		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZEALL));
-		m_cursorChangeToCross = false;
-		return TRUE;
-	}
-
-	if (m_cursorChangeToSizeEW)
-	{
-		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZENESW));
-		m_cursorChangeToSizeEW = false;
-		return TRUE;
-	}
-
-	if (m_cursorChangeToSizeWE)
-	{
-		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_SIZENWSE));
-		m_cursorChangeToSizeWE = false;
-		return TRUE;
-	}
-
-	return CView::OnSetCursor(pWnd, nHitTest, message);
 }
 
 void CDrawerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -313,13 +289,9 @@ void CDrawerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CDrawerView::OnSize(UINT nType, int cx, int cy)
 {
 	CScrollView::OnSize(nType, cx, cy);
-
-	auto clientRect = GetClientRectangle();
-	CSize size;
-	size.cx = clientRect.Width;
-	size.cy = clientRect.Height;
-	SetScrollSizes(MM_TEXT, size);
+	SetScrollsState();
 }
+
 // CDrawerView diagnostics
 
 #ifdef _DEBUG
@@ -339,54 +311,6 @@ CDrawerDoc* CDrawerView::GetDocument() const // non-debug version is inline
 	return (CDrawerDoc*)m_pDocument;
 }
 #endif //_DEBUG
-
-
-void CDrawerView::CreateShape(ShapeType type)
-{
-	CDrawerDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return;
-
-	auto clientRectangle = GetClientRectangle();
-	Gdiplus::Rect drawRect;
-	LONG width = 0;
-	LONG height = 0;
-	switch (type)
-	{
-	case ShapeType::TRIANGLE:
-		{
-			width = TRIANGLE_WIDTH_START;
-			height = TRIANGLE_HEIGHT_START;
-		}
-		break;
-	case ShapeType::RECTANGLE:
-		{
-			width = RECTANGLE_WIDTH_START;
-			height = RECTANGLE_HEIGHT_START;
-		}
-		break;
-	case ShapeType::ELLIPSE:
-		{
-			width = ELLIPSE_WIDTH_START;
-			height = ELLIPSE_HEIGHT_START;
-		}
-		break;
-	}
-	drawRect.Width = width;
-	drawRect.Height = height;
-	drawRect.X = (clientRectangle.Width - width) / 2;
-	drawRect.Y = (clientRectangle.Height - height) / 2;
-
-	auto shapeCtrl = pDoc->CreateShapeCtrl(type, drawRect);
-	pDoc->AddCommand(new CCreateShapeCommand(pDoc, type, drawRect));
-
-	if (shapeCtrl)
-	{
-		pDoc->SetSelectedShapeIndex(-1);
-		Invalidate();
-	}
-}
 
 // CDrawerView message handlers
 
@@ -444,7 +368,6 @@ void CDrawerView::OnUpdateEditUndo(CCmdUI *pCmdUI)
 	}
 }
 
-
 void CDrawerView::OnUpdateEditRedo(CCmdUI *pCmdUI)
 {
 	CDrawerDoc* pDoc = GetDocument();
@@ -460,4 +383,102 @@ void CDrawerView::OnUpdateEditRedo(CCmdUI *pCmdUI)
 	{
 		pCmdUI->Enable(FALSE);
 	}
+}
+
+// CDrawerView internal functions
+
+Gdiplus::Rect CDrawerView::GetClientRectangle()
+{
+	GetClientRect(&m_clientRectangle);
+	m_clientRectangle.right = max(VIEW_WIDTH, m_clientRectangle.right);
+	m_clientRectangle.bottom = max(VIEW_HEIGHT, m_clientRectangle.bottom);
+
+	return Gdiplus::Rect(0, 0, m_clientRectangle.right, m_clientRectangle.bottom);
+}
+
+void CDrawerView::CreateShape(ShapeType type)
+{
+	CDrawerDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	Gdiplus::Rect drawRect = GetStartShapeRect(type);
+
+	bool isCreated = pDoc->CreateShapeCtrl(type, drawRect);
+	pDoc->AddCommand(new CCreateShapeCommand(pDoc, type, drawRect));
+
+	if (isCreated)
+	{
+		pDoc->SetSelectedShapeIndex(-1);
+		Invalidate();
+	}
+}
+
+Gdiplus::Rect CDrawerView::GetStartShapeRect(ShapeType type)
+{
+	Gdiplus::Rect resultRect;
+
+	auto clientRectangle = GetClientRectangle();
+	LONG width = 0;
+	LONG height = 0;
+	switch (type)
+	{
+		case ShapeType::TRIANGLE:
+		{
+			width = TRIANGLE_WIDTH_START;
+			height = TRIANGLE_HEIGHT_START;
+		}
+		break;
+		case ShapeType::RECTANGLE:
+		{
+			width = RECTANGLE_WIDTH_START;
+			height = RECTANGLE_HEIGHT_START;
+		}
+		break;
+		case ShapeType::ELLIPSE:
+		{
+			width = ELLIPSE_WIDTH_START;
+			height = ELLIPSE_HEIGHT_START;
+		}
+		break;
+	}
+
+	resultRect.Width = width;
+	resultRect.Height = height;
+	resultRect.X = (clientRectangle.Width - width) / 2;
+	resultRect.Y = (clientRectangle.Height - height) / 2;
+
+	return resultRect;
+}
+
+void CDrawerView::SetStandardCursor()
+{
+	SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
+	m_cursorCross = m_cursorNE = m_cursorNW = false;
+}
+
+void CDrawerView::SetScrollsState()
+{
+	auto clientRect = GetClientRectangle();
+	SetScrollSizes(MM_TEXT, CSize(clientRect.Width, clientRect.Height));
+}
+
+void CDrawerView::NormalizeGdiPoint(Gdiplus::Point &point)
+{
+	auto clientRect = GetClientRectangle();
+	if (point.X < 0) point.X = 0;
+	if (point.X > clientRect.Width) point.X = clientRect.Width;
+	if (point.Y < 0) point.Y = 0;
+	if (point.Y > clientRect.Height) point.Y = clientRect.Height;
+}
+
+bool CDrawerView::IsEqualPoints(const Gdiplus::Point &first, const Gdiplus::Point &second) const
+{
+	return (first.X == second.X) && (first.Y == second.Y);
+}
+
+bool CDrawerView::IsEqualRects(const Gdiplus::Rect &first, const Gdiplus::Rect &second) const
+{
+	return (first.X == second.X) && (first.Y == second.Y) && (first.Width == second.Width) && (first.Height == second.Height);
 }

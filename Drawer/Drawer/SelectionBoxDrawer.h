@@ -11,5 +11,5 @@ public:
 private:
 	Gdiplus::Pen m_pen;
 	Gdiplus::SolidBrush m_circleBrush;
-	static const int CIRCLE_RADIUS = 4;
+	static const int CIRCLE_RADIUS = 5;
 };

@@ -2,7 +2,6 @@
 // Включаемый файл, созданный в Microsoft Visual C++.
 // Используется Drawer.rc
 //
-#define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDB_WRITESMALL                  110
 #define IDB_WRITELARGE                  111
@@ -34,6 +33,9 @@
 #define IDS_EDIT_MENU                   306
 #define IDR_RIBBON                      307
 #define IDB_PNG_SHAPE_BUTTONS           321
+#define IDB_PNG_UNDO_REDO               323
+#define IDB_PNG1                        324
+#define IDB_PNG_UNDO_REDO_SMALL         324
 #define ID_BUTTON_TRIANGLE              32779
 #define ID_BUTTON_ELLIPSE               32780
 #define ID_BUTTON_RECTANGLE             32782
@@ -42,8 +44,8 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        323
-#define _APS_NEXT_COMMAND_VALUE         32789
+#define _APS_NEXT_RESOURCE_VALUE        325
+#define _APS_NEXT_COMMAND_VALUE         32792
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

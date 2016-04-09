@@ -216,5 +216,11 @@
     <Image Include="res\ShapeButtons.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
+    <Image Include="res\ur.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\ur_small.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
 </Project>

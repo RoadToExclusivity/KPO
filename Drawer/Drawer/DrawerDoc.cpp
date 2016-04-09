@@ -120,6 +120,11 @@ bool CDrawerDoc::CanRedo() const
 	return m_commands.CanRedo();
 }
 
+bool CDrawerDoc::NeedSave() const
+{
+	return !m_commands.IsOnSavePoint();
+}
+
 bool CDrawerDoc::CreateShapeCtrl(ShapeType type, const Gdiplus::Rect& rect, int pos)
 {
 	LONG width = rect.Width;
@@ -163,11 +168,21 @@ void CDrawerDoc::InitVars()
 	m_commands.Clear();
 }
 
+int CDrawerDoc::PromptToSave() const
+{
+	return MessageBox(nullptr,
+					(LPCWSTR)L"Do you want to save file?", 
+					(LPCWSTR)L"File save",
+					MB_ICONASTERISK | MB_YESNOCANCEL | MB_DEFBUTTON1);
+}
+
 BOOL CDrawerDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
+	{
 		return FALSE;
-
+	}
+		
 	InitVars();
 
 	return TRUE;
@@ -178,7 +193,22 @@ BOOL CDrawerDoc::OnOpenDocument(LPCTSTR lpszPath)
 	InitVars();
 
 	if (!CDocument::OnOpenDocument(lpszPath))
+	{
 		return FALSE;
+	}
+
+	return TRUE;
+}
+
+BOOL CDrawerDoc::OnSaveDocument(LPCTSTR lpszPath)
+{
+	if (!CDocument::OnSaveDocument(lpszPath))
+	{
+		return FALSE;
+	}
+
+	m_commands.SetOnSavePoint();
+	SetModifiedFlag(FALSE);
 
 	return TRUE;
 }

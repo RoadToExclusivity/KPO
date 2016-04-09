@@ -29,21 +29,27 @@ class CDrawerApp : public CWinAppEx
 public:
 	CDrawerApp();
 
-
 // Overrides
 public:
-	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+	virtual BOOL InitInstance() override;
+	virtual int ExitInstance() override;
+protected:
+	afx_msg void OnClosingMainFrame(CFrameImpl* pFrameImpl) override;
 
 // Implementation
+public:
 	UINT  m_nAppLook;
 	virtual void PreLoadState();
-	virtual void LoadCustomState();
-	virtual void SaveCustomState();
-
-	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+
 private:
+	afx_msg void OnNewFile();
+	afx_msg void OnOpenFile();
+	afx_msg void OnOpenRecentFiles(UINT id);
+
+private:
+	void SetDocumentSaveState();
+
 	Gdiplus::GdiplusStartupInput m_gdiStartupInput;
 	ULONG_PTR m_gdiplusToken;
 };

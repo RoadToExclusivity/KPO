@@ -169,6 +169,8 @@
     <Image Include="res\ShapeButtons.png" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\ur.png" />
+    <Image Include="res\ur_small.png" />
     <Image Include="res\writelarge.bmp" />
     <Image Include="res\writesmall.bmp" />
   </ItemGroup>

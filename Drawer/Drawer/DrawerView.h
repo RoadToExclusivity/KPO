@@ -30,8 +30,8 @@ public:
 
 // Overrides
 public:
-	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual void OnDraw(CDC* pDC) override;  // overridden to draw this view
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	virtual void OnInitialUpdate() override;
 protected:
 
@@ -51,11 +51,11 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
-public:
+
+private:
 	afx_msg void OnButtonRectangle();
 	afx_msg void OnButtonEllipse();
 	afx_msg void OnButtonTriangle();
@@ -68,26 +68,31 @@ private:
 	static const int VIEW_WIDTH = 640;
 	static const int VIEW_HEIGHT = 480;
 
-	Gdiplus::Rect GetClientRectangle();
-	void CreateShape(ShapeType type);
-	RECT m_clientRectangle;
-
-	bool m_cursorChangeToCross;
-	bool m_cursorChangeToNormal;
-	bool m_cursorChangeToSizeWE;
-	bool m_cursorChangeToSizeEW;
-	SelectionBoxMarkerState m_resizeSelectionMarker;
-	Gdiplus::Point m_diffPointPosition;
-	Gdiplus::Point m_startDragPoint;
-	Gdiplus::Rect m_startResizeRect;
-	Gdiplus::SolidBrush m_backgroundBrush;
-
 	const LONG RECTANGLE_WIDTH_START = 200;
 	const LONG RECTANGLE_HEIGHT_START = 100;
 	const LONG ELLIPSE_WIDTH_START = 200;
 	const LONG ELLIPSE_HEIGHT_START = 200;
 	const LONG TRIANGLE_WIDTH_START = 100;
 	const LONG TRIANGLE_HEIGHT_START = 150;
+
+	Gdiplus::Rect GetClientRectangle();
+	void CreateShape(ShapeType type);
+	Gdiplus::Rect GetStartShapeRect(ShapeType type);
+	void SetScrollsState();
+	void SetStandardCursor();
+	void NormalizeGdiPoint(Gdiplus::Point& point);
+	bool IsEqualPoints(const Gdiplus::Point& first, const Gdiplus::Point& second) const;
+	bool IsEqualRects(const Gdiplus::Rect& first, const Gdiplus::Rect& second) const;
+
+	RECT m_clientRectangle;
+	bool m_cursorCross;
+	bool m_cursorNW;
+	bool m_cursorNE;
+	SelectionBoxMarkerState m_resizeSelectionMarker;
+	Gdiplus::Point m_diffPointPosition;
+	Gdiplus::Point m_startDragPoint;
+	Gdiplus::Rect m_startResizeRect;
+	const Gdiplus::SolidBrush m_backgroundBrush;
 };
 
 #ifndef _DEBUG  // debug version in DrawerView.cpp

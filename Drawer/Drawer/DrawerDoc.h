@@ -40,11 +40,12 @@ public:
 	bool IsShapeDragged() const;
 	int GetDraggedShapeIndex() const;
 	void DeleteShapeCtrl(int index);
-	void AddCommand(IShapeCommand*);
+	void AddCommand(IShapeCommand* cmd);
 	void Undo();
 	void Redo();
 	bool CanUndo() const;
 	bool CanRedo() const;
+	bool NeedSave() const;
 // Operations
 public:
 
@@ -52,6 +53,7 @@ public:
 public:
 	virtual BOOL OnNewDocument() override;
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPath) override;
+	virtual BOOL OnSaveDocument(LPCTSTR lpszPath) override;
 	virtual void Serialize(CArchive& ar) override;
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
@@ -79,6 +81,7 @@ protected:
 
 private:
 	void InitVars();
+	int PromptToSave() const;
 
 	std::vector<CtrlPtr> m_shapesControllers;
 	CEllipseFactory m_ellipseFactory;

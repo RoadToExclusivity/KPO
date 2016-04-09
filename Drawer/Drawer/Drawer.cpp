@@ -17,7 +17,6 @@
 #include "afxdialogex.h"
 #include "Drawer.h"
 #include "MainFrm.h"
-
 #include "DrawerDoc.h"
 #include "DrawerView.h"
 
@@ -29,10 +28,10 @@
 // CDrawerApp
 
 BEGIN_MESSAGE_MAP(CDrawerApp, CWinAppEx)
-	ON_COMMAND(ID_APP_ABOUT, &CDrawerApp::OnAppAbout)
 	// Standard file based document commands
-	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
+	ON_COMMAND(ID_FILE_NEW, &CDrawerApp::OnNewFile)
+	ON_COMMAND(ID_FILE_OPEN, &CDrawerApp::OnOpenFile)
+	ON_COMMAND_RANGE(ID_FILE_MRU_FIRST, ID_FILE_MRU_LAST, &CDrawerApp::OnOpenRecentFiles)
 END_MESSAGE_MAP()
 
 // CDrawerApp construction
@@ -138,44 +137,34 @@ int CDrawerApp::ExitInstance()
 	return CWinAppEx::ExitInstance();
 }
 
+void CDrawerApp::OnClosingMainFrame(CFrameImpl* pFrameImpl)
+{
+	SetDocumentSaveState();
+
+	CWinAppEx::OnClosingMainFrame(pFrameImpl);
+}
+
 // CDrawerApp message handlers
 
-
-// CAboutDlg dialog used for App About
-
-class CAboutDlg : public CDialogEx
+void CDrawerApp::OnNewFile()
 {
-public:
-	CAboutDlg();
+	SetDocumentSaveState();
 
-// Dialog Data
-	enum { IDD = IDD_ABOUTBOX };
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-// Implementation
-protected:
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
-{
+	CWinAppEx::OnFileNew();
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+void CDrawerApp::OnOpenFile()
 {
-	CDialogEx::DoDataExchange(pDX);
+	SetDocumentSaveState();
+
+	CWinAppEx::OnFileOpen();
 }
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-END_MESSAGE_MAP()
-
-// App command to run the dialog
-void CDrawerApp::OnAppAbout()
+void CDrawerApp::OnOpenRecentFiles(UINT id)
 {
-	CAboutDlg aboutDlg;
-	aboutDlg.DoModal();
+	SetDocumentSaveState();
+
+	CWinAppEx::OnOpenRecentFile(id);
 }
 
 // CDrawerApp customization load/save methods
@@ -189,12 +178,14 @@ void CDrawerApp::PreLoadState()
 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
 }
 
-void CDrawerApp::LoadCustomState()
+void CDrawerApp::SetDocumentSaveState()
 {
+	if (m_pMainWnd)
+	{
+		CDrawerDoc* doc = (CDrawerDoc*)((CFrameWndEx*)m_pMainWnd)->GetActiveDocument();
+		if (doc && doc->NeedSave())
+		{
+			doc->SetModifiedFlag(TRUE);
+		}
+	}
 }
-
-void CDrawerApp::SaveCustomState()
-{
-}
-
-// CDrawerApp message handlers
