@@ -6,10 +6,6 @@ CEllipse::CEllipse(const Gdiplus::Rect& rect)
 {
 }
 
-CEllipse::~CEllipse()
-{
-}
-
 bool CEllipse::IsShapePoint(const Gdiplus::Point& inPoint) const
 {
 	auto boundingBox = GetBoundingBox();

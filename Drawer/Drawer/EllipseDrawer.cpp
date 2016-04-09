@@ -9,11 +9,7 @@ CEllipseDrawer::CEllipseDrawer()
 {
 }
 
-CEllipseDrawer::~CEllipseDrawer()
-{
-}
-
-void CEllipseDrawer::Draw(HDC hDC, const Gdiplus::Rect& rect) const
+void CEllipseDrawer::Draw(const HDC hDC, const Gdiplus::Rect& rect) const
 {
 	if (hDC)
 	{

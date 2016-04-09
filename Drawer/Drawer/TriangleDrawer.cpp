@@ -3,22 +3,18 @@
 
 CTriangleDrawer::CTriangleDrawer()
 	:IShapeDrawer(),
-	m_pen(Gdiplus::Color(102, 153, 51), 2.0f),
-	m_brush(Gdiplus::Color(0, 102, 153))
+	m_pen(Gdiplus::Color(102, 153, 51), 1.0f),
+	m_brush(Gdiplus::Color(102, 0, 102))
 {
 }
 
-CTriangleDrawer::~CTriangleDrawer()
-{
-}
-
-void CTriangleDrawer::Draw(HDC hDC, const Gdiplus::Rect& rect) const
+void CTriangleDrawer::Draw(const HDC hDC, const Gdiplus::Rect& rect) const
 {
 	if (hDC)
 	{
-		Gdiplus::Point points[3] = { Gdiplus::Point((rect.GetLeft() + rect.GetRight())/ 2, rect.GetTop()), 
-									Gdiplus::Point(rect.GetLeft(), rect.GetBottom()), 
-									Gdiplus::Point (rect.GetRight(), rect.GetBottom())};
+		const Gdiplus::PointF points[3] = { Gdiplus::PointF((rect.GetLeft() + rect.GetRight()) / 2.0f, 1.0f * rect.GetTop()), 
+									Gdiplus::PointF(1.0f * rect.GetLeft(), 1.0f * rect.GetBottom()), 
+									Gdiplus::PointF(1.0f * rect.GetRight(), 1.0f * rect.GetBottom())};
 		Gdiplus::Graphics g(hDC);
 		g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
 		g.DrawPolygon(&m_pen, points, 3);

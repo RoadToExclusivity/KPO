@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "SelectionBoxDrawer.h"
 #include "IShape.h"
 
 IShape::IShape(const Gdiplus::Rect &rect)

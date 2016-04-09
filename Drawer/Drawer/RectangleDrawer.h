@@ -6,11 +6,10 @@ class CRectangleDrawer :
 {
 public:
 	CRectangleDrawer();
-	~CRectangleDrawer();
 
-	void Draw(HDC, const Gdiplus::Rect&) const override;
+	void Draw(const HDC hDC, const Gdiplus::Rect& rect) const override;
 
 private:
-	Gdiplus::Pen m_pen;
-	Gdiplus::SolidBrush m_brush;
+	const Gdiplus::Pen m_pen;
+	const Gdiplus::SolidBrush m_brush;
 };

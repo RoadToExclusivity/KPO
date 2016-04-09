@@ -29,151 +29,32 @@ CDrawerDoc::CDrawerDoc()
 	m_ellipseFactory(),
 	m_rectFactory(),
 	m_triangleFactory(),
-	m_factories(),
 	m_isShapeResized(false),
-	m_selectedShapeIndex(-1),
-	m_dragShapeIndex(-1),
+	m_isShapeSelected(false),
+	m_isShapeDragged(false),
+	m_selectedShapeIndex(0),
+	m_draggedShapeIndex(0),
 	m_commands()
 {
 	m_factories[0] = &m_triangleFactory;
 	m_factories[1] = &m_rectFactory;
 	m_factories[2] = &m_ellipseFactory;
-	//m_factories({ &m_triangleFactory, &m_rectFactory, &m_ellipseFactory });
 }
 
 CDrawerDoc::~CDrawerDoc()
 {
 }
 
-void CDrawerDoc::SetShapeResized()
-{
-	m_isShapeResized = true;
-}
-
-void CDrawerDoc::SetShapeUnresized()
-{
-	m_isShapeResized = false;
-}
-
-bool CDrawerDoc::IsShapeResized() const
-{
-	return m_isShapeResized;
-}
-
-void CDrawerDoc::SetSelectedShapeIndex(int shapeIndex)
-{
-	m_selectedShapeIndex = shapeIndex;
-}
-
-int CDrawerDoc::GetSelectedShapeIndex() const
-{
-	return m_selectedShapeIndex;
-}
-
-void CDrawerDoc::SetDragged(int shapeIndex)
-{
-	m_dragShapeIndex = shapeIndex;
-}
-
-void CDrawerDoc::SetUndragged()
-{
-	m_dragShapeIndex = -1;
-}
-
-bool CDrawerDoc::IsShapeDragged() const
-{
-	return m_dragShapeIndex != -1;
-}
-
-int CDrawerDoc::GetDraggedShapeIndex() const
-{
-	return m_dragShapeIndex;
-}
-
-void CDrawerDoc::DeleteShapeCtrl(int index)
-{
-	m_shapesControllers.erase(m_shapesControllers.begin() + index);
-}
-
-void CDrawerDoc::AddCommand(IShapeCommand* cmd)
-{
-	m_commands.Insert(cmd);
-}
-
-void CDrawerDoc::Undo()
-{
-	m_commands.Undo();
-}
-
-void CDrawerDoc::Redo()
-{
-	m_commands.Redo();
-}
-
-bool CDrawerDoc::CanUndo() const
-{
-	return m_commands.CanUndo();
-}
-
-bool CDrawerDoc::CanRedo() const
-{
-	return m_commands.CanRedo();
-}
-
-bool CDrawerDoc::NeedSave() const
-{
-	return !m_commands.IsOnSavePoint();
-}
-
-bool CDrawerDoc::CreateShapeCtrl(ShapeType type, const Gdiplus::Rect& rect, int pos)
-{
-	LONG width = rect.Width;
-	LONG height = rect.Height;
-
-	IControllerFactory* factory = m_factories[(int)type];
-	CtrlPtr newRectController = factory->CreateShapeController(rect);
-
-	if (newRectController)
-	{
-		if (pos == -1)
-		{
-			m_shapesControllers.push_back(newRectController);
-		}
-		else
-		{
-			m_shapesControllers.insert(m_shapesControllers.cbegin() + pos, newRectController);
-		}
-	}
-
-	return newRectController != nullptr;
-}
-
-const std::vector<CtrlPtr> CDrawerDoc::GetShapes() const
-{
-	return m_shapesControllers;
-}
-
-size_t CDrawerDoc::GetShapesCount() const
-{
-	return m_shapesControllers.size();
-}
-
 void CDrawerDoc::InitVars()
 {
 	m_shapesControllers.clear();
 	m_isShapeResized = false;
-	m_selectedShapeIndex = -1;
-	m_dragShapeIndex = -1;
+	m_isShapeSelected = false;
+	m_isShapeDragged = false;
+	m_selectedShapeIndex = 0;
+	m_draggedShapeIndex = 0;
 
 	m_commands.Clear();
-}
-
-int CDrawerDoc::PromptToSave() const
-{
-	return MessageBox(nullptr,
-					(LPCWSTR)L"Do you want to save file?", 
-					(LPCWSTR)L"File save",
-					MB_ICONASTERISK | MB_YESNOCANCEL | MB_DEFBUTTON1);
 }
 
 BOOL CDrawerDoc::OnNewDocument()
@@ -312,3 +193,128 @@ void CDrawerDoc::Dump(CDumpContext& dc) const
 
 
 // CDrawerDoc commands
+
+const std::vector<CtrlPtr>& CDrawerDoc::GetShapes() const
+{
+	return m_shapesControllers;
+}
+
+size_t CDrawerDoc::GetShapesCount() const
+{
+	return m_shapesControllers.size();
+}
+
+bool CDrawerDoc::CreateShapeCtrl(ShapeType type, const Gdiplus::Rect& rect, int pos)
+{
+	LONG width = rect.Width;
+	LONG height = rect.Height;
+
+	const IControllerFactory* factory = m_factories[(int)type];
+	CtrlPtr newRectController = factory->CreateShapeController(rect);
+
+	if (newRectController)
+	{
+		if (pos == -1)
+		{
+			m_shapesControllers.push_back(newRectController);
+		}
+		else
+		{
+			m_shapesControllers.insert(m_shapesControllers.cbegin() + pos, newRectController);
+		}
+	}
+
+	return newRectController != nullptr;
+}
+
+void CDrawerDoc::SetShapeResized()
+{
+	m_isShapeResized = true;
+}
+
+void CDrawerDoc::SetShapeUnresized()
+{
+	m_isShapeResized = false;
+}
+
+bool CDrawerDoc::IsShapeResized() const
+{
+	return m_isShapeResized;
+}
+
+void CDrawerDoc::SetSelectedShapeIndex(size_t shapeIndex)
+{
+	m_isShapeSelected = true;
+	m_selectedShapeIndex = shapeIndex;
+}
+
+void CDrawerDoc::SetUnselected()
+{
+	m_isShapeSelected = false;
+}
+
+bool CDrawerDoc::IsShapeSelected() const
+{
+	return m_isShapeSelected;
+}
+
+size_t CDrawerDoc::GetSelectedShapeIndex() const
+{
+	return m_selectedShapeIndex;
+}
+
+void CDrawerDoc::SetDragged(size_t shapeIndex)
+{
+	m_isShapeDragged = true;
+	m_draggedShapeIndex = shapeIndex;
+}
+
+void CDrawerDoc::SetUndragged()
+{
+	m_isShapeDragged = false;
+}
+
+bool CDrawerDoc::IsShapeDragged() const
+{
+	return m_isShapeDragged;
+}
+
+size_t CDrawerDoc::GetDraggedShapeIndex() const
+{
+	return m_draggedShapeIndex;
+}
+
+void CDrawerDoc::DeleteShapeCtrl(size_t index)
+{
+	m_shapesControllers.erase(m_shapesControllers.begin() + index);
+}
+
+void CDrawerDoc::AddCommand(IShapeCommand* cmd)
+{
+	m_commands.Insert(cmd);
+}
+
+void CDrawerDoc::Undo()
+{
+	m_commands.Undo();
+}
+
+void CDrawerDoc::Redo()
+{
+	m_commands.Redo();
+}
+
+bool CDrawerDoc::CanUndo() const
+{
+	return m_commands.CanUndo();
+}
+
+bool CDrawerDoc::CanRedo() const
+{
+	return m_commands.CanRedo();
+}
+
+bool CDrawerDoc::NeedSave() const
+{
+	return !m_commands.IsOnSavePoint();
+}

@@ -8,11 +8,7 @@ CRectangleDrawer::CRectangleDrawer()
 {
 }
 
-CRectangleDrawer::~CRectangleDrawer()
-{
-}
-
-void CRectangleDrawer::Draw(HDC hDC, const Gdiplus::Rect& rect) const
+void CRectangleDrawer::Draw(const HDC hDC, const Gdiplus::Rect& rect) const
 {
 	if (hDC)
 	{

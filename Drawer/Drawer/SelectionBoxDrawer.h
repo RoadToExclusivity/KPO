@@ -4,12 +4,12 @@ class CSelectionBoxDrawer
 {
 public:
 	CSelectionBoxDrawer();
-	~CSelectionBoxDrawer();
-	void DrawSelectionBorder(const HDC, const Gdiplus::Rect&);
-	SelectionBoxMarkerState IsPointAtMarker(const Gdiplus::Point&, const Gdiplus::Rect&) const;
+	void DrawSelectionBorder(const HDC hDC, const Gdiplus::Rect& rect) const;
+	SelectionBoxMarkerState IsPointAtMarker(const Gdiplus::Point& point, const Gdiplus::Rect& rect) const;
 
 private:
-	Gdiplus::Pen m_pen;
-	Gdiplus::SolidBrush m_circleBrush;
 	static const int CIRCLE_RADIUS = 5;
+
+	const Gdiplus::Pen m_pen;
+	const Gdiplus::SolidBrush m_circleBrush;
 };

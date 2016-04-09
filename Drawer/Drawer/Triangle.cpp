@@ -7,10 +7,6 @@ CTriangle::CTriangle(const Gdiplus::Rect& rect)
 {
 }
 
-CTriangle::~CTriangle()
-{
-}
-
 bool CTriangle::IsCorrectWidth(int newWidth) const
 {
 	return newWidth >= TRIANGLE_MIN_WIDTH;

@@ -104,13 +104,13 @@ void CDrawerView::OnDraw(CDC* pDC)
 	Gdiplus::Graphics g(bufferHDC);
 	g.FillRectangle(&m_backgroundBrush, 0, 0, clientRect.Width, clientRect.Height);
 
-	auto shapeCtrls = pDoc->GetShapes();
+	auto& shapeCtrls = pDoc->GetShapes();
 	for (const auto& ctrl : shapeCtrls)
 	{
 		ctrl->Draw(bufferHDC);
 	}
 
-	if (pDoc->GetSelectedShapeIndex() != -1)
+	if (pDoc->IsShapeSelected())
 	{
 		shapeCtrls[pDoc->GetSelectedShapeIndex()]->DrawSelectionBox(bufferHDC);
 	}
@@ -132,8 +132,9 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 
 	SetCapture();
 	Gdiplus::Point gdiPoint(point.x, point.y);
-	auto shapeCtrls = pDoc->GetShapes();
-	if (pDoc->GetSelectedShapeIndex() != -1)
+	GetActualPoint(gdiPoint);
+	auto& shapeCtrls = pDoc->GetShapes();
+	if (pDoc->IsShapeSelected())
 	{
 		const auto& curShapeCtrl = shapeCtrls[pDoc->GetSelectedShapeIndex()];
 		m_resizeSelectionMarker = curShapeCtrl->IsPointAtMarker(gdiPoint);
@@ -146,7 +147,7 @@ void CDrawerView::OnLButtonDown(UINT /* nFlags */, CPoint point)
 		}
 	}
 
-	pDoc->SetSelectedShapeIndex(-1);
+	pDoc->SetUnselected();
 	for (int i = shapeCtrls.size() - 1; i >= 0; --i)
 	{
 		if (shapeCtrls[i]->IsShapePoint(gdiPoint))
@@ -170,11 +171,12 @@ void CDrawerView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		return;
 
 	Gdiplus::Point gdiPoint(point.x, point.y);
+	GetActualPoint(gdiPoint);
 	NormalizeGdiPoint(gdiPoint);
 
 	if (pDoc->IsShapeResized())
 	{
-		auto shapeCtrls = pDoc->GetShapes();
+		auto& shapeCtrls = pDoc->GetShapes();
 		shapeCtrls[pDoc->GetSelectedShapeIndex()]->ChangeShapeSize(m_resizeSelectionMarker, gdiPoint);
 		if (m_resizeSelectionMarker == SelectionBoxMarkerState::BOTTOM_LEFT ||
 			m_resizeSelectionMarker == SelectionBoxMarkerState::TOP_RIGHT)
@@ -206,7 +208,7 @@ void CDrawerView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 				m_cursorCross = true;
 			}
 
-			auto shapeCtrls = pDoc->GetShapes();
+			auto& shapeCtrls = pDoc->GetShapes();
 			auto newPos = m_diffPointPosition + gdiPoint;
 
 			shapeCtrls[pDoc->GetDraggedShapeIndex()]->SetPosition(newPos);
@@ -228,7 +230,7 @@ void CDrawerView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		SetStandardCursor();
 
 		auto& shapeCtrls = pDoc->GetShapes();
-		int resizeIndex = pDoc->GetSelectedShapeIndex();
+		size_t resizeIndex = pDoc->GetSelectedShapeIndex();
 		auto shapeRect = shapeCtrls[resizeIndex]->GetBoundingBox();
 		if (!IsEqualRects(m_startResizeRect, shapeRect))
 		{
@@ -243,7 +245,7 @@ void CDrawerView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		{
 			SetStandardCursor();
 
-			int dragIndex = pDoc->GetDraggedShapeIndex();
+			size_t dragIndex = pDoc->GetDraggedShapeIndex();
 			auto& shapeCtrls = pDoc->GetShapes();
 			pDoc->SetSelectedShapeIndex(dragIndex);
 			auto shapePos = shapeCtrls[dragIndex]->GetPosition();
@@ -273,13 +275,13 @@ void CDrawerView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if (!pDoc)
 			return;
 
-		if (pDoc->GetSelectedShapeIndex() != -1 && !pDoc->IsShapeResized())
+		if (pDoc->IsShapeSelected() && !pDoc->IsShapeResized())
 		{
 			auto& shapes = pDoc->GetShapes();
-			int selIndex = pDoc->GetSelectedShapeIndex();
+			size_t selIndex = pDoc->GetSelectedShapeIndex();
 			pDoc->AddCommand(new CDeleteShapeCommand(pDoc, shapes[selIndex]->GetShapeType(), shapes[selIndex]->GetBoundingBox(), pDoc->GetSelectedShapeIndex()));
 			pDoc->DeleteShapeCtrl(pDoc->GetSelectedShapeIndex());
-			pDoc->SetSelectedShapeIndex(-1);
+			pDoc->SetUnselected();
 			
 			Invalidate();
 		}
@@ -387,7 +389,7 @@ void CDrawerView::OnUpdateEditRedo(CCmdUI *pCmdUI)
 
 // CDrawerView internal functions
 
-Gdiplus::Rect CDrawerView::GetClientRectangle()
+Gdiplus::Rect CDrawerView::GetClientRectangle() const
 {
 	GetClientRect(&m_clientRectangle);
 	m_clientRectangle.right = max(VIEW_WIDTH, m_clientRectangle.right);
@@ -410,12 +412,12 @@ void CDrawerView::CreateShape(ShapeType type)
 
 	if (isCreated)
 	{
-		pDoc->SetSelectedShapeIndex(-1);
+		pDoc->SetUnselected();
 		Invalidate();
 	}
 }
 
-Gdiplus::Rect CDrawerView::GetStartShapeRect(ShapeType type)
+Gdiplus::Rect CDrawerView::GetStartShapeRect(ShapeType type) const
 {
 	Gdiplus::Rect resultRect;
 
@@ -452,19 +454,36 @@ Gdiplus::Rect CDrawerView::GetStartShapeRect(ShapeType type)
 	return resultRect;
 }
 
-void CDrawerView::SetStandardCursor()
-{
-	SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
-	m_cursorCross = m_cursorNE = m_cursorNW = false;
-}
-
 void CDrawerView::SetScrollsState()
 {
 	auto clientRect = GetClientRectangle();
 	SetScrollSizes(MM_TEXT, CSize(clientRect.Width, clientRect.Height));
 }
 
-void CDrawerView::NormalizeGdiPoint(Gdiplus::Point &point)
+void CDrawerView::SetStandardCursor()
+{
+	SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
+	m_cursorCross = m_cursorNE = m_cursorNW = false;
+}
+
+void CDrawerView::GetActualPoint(Gdiplus::Point &point) const
+{
+	BOOL hasHBar = false, hasVBar = false;
+	CheckScrollBars(hasHBar, hasVBar);
+	auto scrollPoint = GetScrollPosition();
+
+	if (hasHBar)
+	{
+		point.X += scrollPoint.x;
+	}
+
+	if (hasVBar)
+	{
+		point.Y += scrollPoint.y;
+	}
+}
+
+void CDrawerView::NormalizeGdiPoint(Gdiplus::Point &point) const
 {
 	auto clientRect = GetClientRectangle();
 	if (point.X < 0) point.X = 0;

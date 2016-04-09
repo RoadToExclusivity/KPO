@@ -7,11 +7,7 @@ CSelectionBoxDrawer::CSelectionBoxDrawer()
 {
 }
 
-CSelectionBoxDrawer::~CSelectionBoxDrawer()
-{
-}
-
-void CSelectionBoxDrawer::DrawSelectionBorder(const HDC hDC, const Gdiplus::Rect& rect)
+void CSelectionBoxDrawer::DrawSelectionBorder(const HDC hDC, const Gdiplus::Rect& rect) const
 {
 	Gdiplus::Graphics g(hDC);
 	g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);

@@ -14,19 +14,24 @@ class CShapeController
 {
 public:
 	virtual ~CShapeController();
+
 	Gdiplus::Rect GetBoundingBox() const;
-	void SetBoundingBox(const Gdiplus::Rect&);
-	void Draw(const HDC) const;
-	void DrawSelectionBox(const HDC) const;
+	void SetBoundingBox(const Gdiplus::Rect& rect);
+	
+	void Draw(const HDC hDC) const;
+	void DrawSelectionBox(const HDC hDC) const;
+	
 	Gdiplus::Point GetPosition() const;
-	void SetPosition(const Gdiplus::Point&);
+	void SetPosition(const Gdiplus::Point& pos);
+	
 	ShapeType GetShapeType() const;
-	bool IsShapePoint(const Gdiplus::Point&) const;
-	SelectionBoxMarkerState IsPointAtMarker(const Gdiplus::Point&) const;
-	void ChangeShapeSize(SelectionBoxMarkerState state, const Gdiplus::Point&);
+	bool IsShapePoint(const Gdiplus::Point& shapePoint) const;
+	SelectionBoxMarkerState IsPointAtMarker(const Gdiplus::Point& point) const;
+	void ChangeShapeSize(SelectionBoxMarkerState state, const Gdiplus::Point& point);
 
 protected:
 	CShapeController(IShape*, IShapeDrawer*);
+
 private:
 	ShapePtr m_shape;
 	ShapeDrawerPtr m_shapeDrawer;

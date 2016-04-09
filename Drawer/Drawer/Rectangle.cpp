@@ -1,13 +1,8 @@
 #include "stdafx.h"
 #include "Rectangle.h"
 
-
 CRectangle::CRectangle(const Gdiplus::Rect& rect)
 	:IShape(rect)
-{
-}
-
-CRectangle::~CRectangle()
 {
 }
 

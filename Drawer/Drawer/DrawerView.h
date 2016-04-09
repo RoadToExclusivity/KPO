@@ -75,16 +75,17 @@ private:
 	const LONG TRIANGLE_WIDTH_START = 100;
 	const LONG TRIANGLE_HEIGHT_START = 150;
 
-	Gdiplus::Rect GetClientRectangle();
+	Gdiplus::Rect GetClientRectangle() const;
 	void CreateShape(ShapeType type);
-	Gdiplus::Rect GetStartShapeRect(ShapeType type);
+	Gdiplus::Rect GetStartShapeRect(ShapeType type) const;
 	void SetScrollsState();
 	void SetStandardCursor();
-	void NormalizeGdiPoint(Gdiplus::Point& point);
+	void GetActualPoint(Gdiplus::Point& point) const;
+	void NormalizeGdiPoint(Gdiplus::Point& point) const;
 	bool IsEqualPoints(const Gdiplus::Point& first, const Gdiplus::Point& second) const;
 	bool IsEqualRects(const Gdiplus::Rect& first, const Gdiplus::Rect& second) const;
 
-	RECT m_clientRectangle;
+	mutable RECT m_clientRectangle;
 	bool m_cursorCross;
 	bool m_cursorNW;
 	bool m_cursorNE;

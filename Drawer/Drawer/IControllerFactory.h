@@ -7,7 +7,7 @@ typedef std::shared_ptr<CShapeController> CtrlPtr;
 class IControllerFactory
 {
 public:
-	virtual CtrlPtr CreateShapeController(const Gdiplus::Rect&) const = 0;
+	virtual CtrlPtr CreateShapeController(const Gdiplus::Rect& rect) const = 0;
 };
 
 class CEllipseFactory : public IControllerFactory

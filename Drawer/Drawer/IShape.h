@@ -3,12 +3,16 @@ class IShape
 {
 public:
 	virtual ~IShape();
+
 	Gdiplus::Rect GetBoundingBox() const;
-	void SetBoundingBox(const Gdiplus::Rect&);
-	virtual bool IsShapePoint(const Gdiplus::Point&) const = 0;
+	void SetBoundingBox(const Gdiplus::Rect& rect);
+	
+	virtual bool IsShapePoint(const Gdiplus::Point& shapePoint) const = 0;
+	
 	Gdiplus::Point GetPosition() const;
-	void SetPosition(const Gdiplus::Point&);
-	void ChangeShape(SelectionBoxMarkerState, const Gdiplus::Point&);
+	void SetPosition(const Gdiplus::Point& diffPoint);
+	void ChangeShape(SelectionBoxMarkerState marker, const Gdiplus::Point& newPoint);
+	
 	virtual bool IsCorrectWidth(int newWidth) const = 0;
 	virtual bool IsCorrectHeight(int newHeight) const = 0;
 	virtual ShapeType GetShapeType() const = 0;

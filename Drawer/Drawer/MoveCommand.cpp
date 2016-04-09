@@ -12,12 +12,12 @@ CMoveCommand::CMoveCommand(CDrawerDoc* doc, size_t shapeIndex, const Gdiplus::Po
 
 void CMoveCommand::Undo()
 {
-	auto &ctrl = m_doc->GetShapes();
-	ctrl[m_shapeIndex]->SetPosition(m_from);
+	auto& shapeCtrls = m_doc->GetShapes();
+	shapeCtrls[m_shapeIndex]->SetPosition(m_from);
 }
 
 void CMoveCommand::Redo()
 {
-	auto &ctrl = m_doc->GetShapes();
-	ctrl[m_shapeIndex]->SetPosition(m_to);
+	auto& shapeCtrls = m_doc->GetShapes();
+	shapeCtrls[m_shapeIndex]->SetPosition(m_to);
 }

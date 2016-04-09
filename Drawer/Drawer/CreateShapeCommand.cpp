@@ -11,11 +11,11 @@ CCreateShapeCommand::CCreateShapeCommand(CDrawerDoc* doc, ShapeType type, const 
 
 void CCreateShapeCommand::Undo()
 {
-	int delShapeIndex = (int)(m_doc->GetShapesCount()) - 1;
+	size_t delShapeIndex = m_doc->GetShapesCount() - 1;
 	m_doc->DeleteShapeCtrl(delShapeIndex);
-	if (m_doc->GetSelectedShapeIndex() == delShapeIndex)
+	if (m_doc->IsShapeSelected() && m_doc->GetSelectedShapeIndex() == delShapeIndex)
 	{
-		m_doc->SetSelectedShapeIndex(-1);
+		m_doc->SetUnselected();
 	}
 }
 

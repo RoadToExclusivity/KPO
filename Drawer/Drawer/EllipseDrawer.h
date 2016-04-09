@@ -1,16 +1,16 @@
 #pragma once
 #include "IShapeDrawer.h"
+
 class CEllipseDrawer :
 	public IShapeDrawer
 {
 public:
 	CEllipseDrawer();
-	~CEllipseDrawer();
 
-	void Draw(HDC, const Gdiplus::Rect&) const override;
+	void Draw(const HDC hDC, const Gdiplus::Rect&) const override;
 
 private:
-	Gdiplus::Pen m_pen;
-	Gdiplus::SolidBrush m_brush;
+	const Gdiplus::Pen m_pen;
+	const Gdiplus::SolidBrush m_brush;
 };
 

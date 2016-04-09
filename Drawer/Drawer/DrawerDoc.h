@@ -25,21 +25,27 @@ protected: // create from serialization only
 	CDrawerDoc();
 	DECLARE_DYNCREATE(CDrawerDoc)
 
-// Attributes
 public:
-	const std::vector<CtrlPtr> GetShapes() const;
+	const std::vector<CtrlPtr>& GetShapes() const;
 	size_t GetShapesCount() const;
 	bool CreateShapeCtrl(ShapeType type, const Gdiplus::Rect& rect, int pos = -1);
+
 	void SetShapeResized();
 	void SetShapeUnresized();
 	bool IsShapeResized() const;
-	void SetSelectedShapeIndex(int shapeIndex);
-	int GetSelectedShapeIndex() const;
-	void SetDragged(int shapeIndex);
+
+	void SetSelectedShapeIndex(size_t shapeIndex);
+	void SetUnselected();
+	bool IsShapeSelected() const;
+	size_t GetSelectedShapeIndex() const;
+	
+	void SetDragged(size_t shapeIndex);
 	void SetUndragged();
 	bool IsShapeDragged() const;
-	int GetDraggedShapeIndex() const;
-	void DeleteShapeCtrl(int index);
+	size_t GetDraggedShapeIndex() const;
+	
+	void DeleteShapeCtrl(size_t index);
+
 	void AddCommand(IShapeCommand* cmd);
 	void Undo();
 	void Redo();
@@ -81,17 +87,18 @@ protected:
 
 private:
 	void InitVars();
-	int PromptToSave() const;
 
 	std::vector<CtrlPtr> m_shapesControllers;
 	CEllipseFactory m_ellipseFactory;
 	CRectangleFactory m_rectFactory;
 	CTriangleFactory m_triangleFactory;
-	IControllerFactory* m_factories[3];
+	const IControllerFactory* m_factories[3];
 
 	bool m_isShapeResized;
-	int m_selectedShapeIndex;
-	int m_dragShapeIndex;
+	bool m_isShapeSelected;
+	bool m_isShapeDragged;
+	size_t m_selectedShapeIndex;
+	size_t m_draggedShapeIndex;
 
 	CCommandStack m_commands;
 };
